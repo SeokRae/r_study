@@ -1,13 +1,16 @@
 ---
 title: "R_Condition"
 author: "seok"
-date: "2018년 3월 31일"
-output: 
+date: "2018<eb>뀈 3<ec>썡 31<ec>씪"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
-    toc: true
+    number_sections: yes
+    toc: yes
     toc_depth: 3
-    toc_float: true
-    number_sections: true
+    toc_float: yes
 ---
 
 # 제어문

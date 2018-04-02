@@ -6,5 +6,5 @@
 
 <a href="r_condition/r_condition.html" > 2. Condition </a>
 
-<a href="r_dataControl/r_r_dataControl.html" > 3. DataControl </a>
+<a href="r_dataControl/r_dataControl.html" > 3. DataControl </a>
 

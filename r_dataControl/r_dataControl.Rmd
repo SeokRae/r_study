@@ -1,0 +1,43 @@
+---
+title: "r_dataControl"
+author: "seok"
+date: "2018년 4월 2일"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+# 데이터 조작
+
+- R에서의 벡터 기반의 처리는 개별 원소를 for 루프 등으로 하나씩 보면서 처리하는 방식보다 종종 빠르게 수행될 뿐만 아니라 손쉽게 병렬화가 가능하다.
+
+- 데이터의 효율적인 처리를 위해서는 R이외에 다른 언어를 사용해 미리 데이터를 처리하여 CSV나 TSV형식으로 파일을 저장한 뒤 이를 R에서 읽어들이거나, R에서 MySQL에 직접 접근하면서 데이터를 처리하는 것도 한가지 방법이 될 수 있다.
+
+## iris 데이터
+
+-  데이터 처리 및 머신 러닝 기법에 예제로 사용할 iris 데이터 셋에 대해
+살펴보자
+
+- iris는 통계학자인 Fisher가 소개한 데이터로서, 붓꽃의 3가지 종(setosa, versicolor, virginica)에 대해 꽃받침(sepal)과 꽃잎(petal)의 길이를 정리한 데이터이다. iris의 각 행에 저장된 데이터는 다음과 같다.
+
+```
+• Species: 붓꽃의 종. setosa, versicolor, virginica의 세가지 값중 하나를 저장한 범주형 변수.
+• Sepal.Width: 꽃받침의 너비. Number 변수.
+• Sepal.Length: 꽃받침의 길이. Number 변수.
+• Petal.Width: 꽃잎의 너비. Number 변수.
+• Petal.Length: 꽃잎의 길이. Number 변수.
+```
+
+- iris 에는 각 종별로 50개씩, 총 150개의 행이 저장되어있다.
+
+> iris 데이터 보기
+
+```{r}
+head(iris)
+```

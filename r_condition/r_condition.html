@@ -226,7 +226,6 @@ div.tocify {
 <div class="section level1">
 <h1><span class="header-section-number">1</span> 제어문</h1>
 <ul>
-<li>R의 특징</li>
 <li>저장된 데이터를 한 번에 다루는 벡터연산을 수행한다는 점</li>
 <li>데이터 분석이기때문에 결측치(NA)가 중요한 주제로 떠오른다는 점</li>
 </ul>
@@ -236,14 +235,14 @@ div.tocify {
 <li>IF문 구조는 다른 언어와 큰 차이가 없다.</li>
 </ul>
 <pre class="r"><code>if ( TRUE ) {
-print ('TRUE ')
-print ('hello ')
+  print('TRUE')
+  print('hello')
 } else {
-print ('FALSE ')
-print ('world ')
+  print('FALSE')
+  print('world')
 }</code></pre>
-<pre><code>## [1] &quot;TRUE &quot;
-## [1] &quot;hello &quot;</code></pre>
+<pre><code>## [1] &quot;TRUE&quot;
+## [1] &quot;hello&quot;</code></pre>
 <blockquote>
 <p>for문</p>
 </blockquote>
@@ -303,15 +302,15 @@ x</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]    2    6
 ## [2,]    4    8</code></pre>
-<pre class="r"><code>x %*% x</code></pre>
+<pre class="r"><code>x %*% x # 행렬간의 곱</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]    7   15
 ## [2,]   10   22</code></pre>
-<pre class="r"><code>t(x)</code></pre>
+<pre class="r"><code>t(x) # 전치행렬(transpose)</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]    1    2
 ## [2,]    3    4</code></pre>
-<pre class="r"><code>solve(x)</code></pre>
+<pre class="r"><code>solve(x) # 역행렬</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]   -2  1.5
 ## [2,]    1 -0.5</code></pre>
@@ -331,7 +330,7 @@ x</code></pre>
 </ul>
 <pre class="r"><code>sum ( c (1 , 2 , 3 , NA ) )</code></pre>
 <pre><code>## [1] NA</code></pre>
-<pre class="r"><code>sum ( c (1 , 2 , 3 , NA ) , na.rm = T )</code></pre>
+<pre class="r"><code>sum ( c (1 , 2 , 3 , NA ) , na.rm = T ) # 함수 안에 NA값이 있을 때 해당 값을 제거할 것인지 지정해주는 na.rm추가</code></pre>
 <pre><code>## [1] 6</code></pre>
 <ul>
 <li>잘알려진 머신 러닝 패키지 중 하나인 caret: Classification and Regression Training은 na.omit, na.pass, na.fail등을 na.action이라는 인자로 받아서 NA 처리를 어떻게 할지 결정한다.</li>
@@ -345,19 +344,18 @@ x</code></pre>
 ## 1 1    a    a
 ## 2 2 &lt;NA&gt;    b
 ## 3 3    c &lt;NA&gt;</code></pre>
-<pre class="r"><code>na.omit (x)</code></pre>
+<pre class="r"><code>na.omit (x) # NA가 포함된 행을 제외</code></pre>
 <pre><code>##   a b c
 ## 1 1 a a</code></pre>
-<pre class="r"><code>na.pass (x)</code></pre>
+<pre class="r"><code>na.pass (x) # NA의 포함 여부를 상관하지 않는다.</code></pre>
 <pre><code>##   a    b    c
 ## 1 1    a    a
 ## 2 2 &lt;NA&gt;    b
 ## 3 3    c &lt;NA&gt;</code></pre>
-<pre class="r"><code># na.fail (x)
+<pre class="r"><code># na.fail (x) # 데이터에 NA가 포함되어있을 경우 에러 발생
 # Error in na.fail.default ( x ) : missing values in object</code></pre>
 <ul>
-<li><p>na.omit은 NA가 포함된 행을 제외하고, na.pass는 NA의 포함여부를 상관하지 않으며, na.fail은 데이터에 NA가 포함되어있을 경우 에러를 내보낸다.</p></li>
-<li><p>따라서 NA를 어떻게 처리할지를 na.action으로 받았다면 ‘na.action(데이터 프레임)’을 실행해 현재 처리중인 데이터를 사용자가 원하는대로 정제할 수 있게 된다.</p></li>
+<li>따라서 NA를 어떻게 처리할지를 na.action으로 받았다면 ‘na.action(데이터 프레임)’을 실행해 현재 처리중인 데이터를 사용자가 원하는대로 정제할 수 있게 된다.</li>
 </ul>
 </div>
 <div id="-" class="section level2">
@@ -821,8 +819,8 @@ for( i in 1:1000) {
 <pre class="r"><code>rm(list=ls()) # 모든 선언된 변수를 삭제하기 위한 명령
 gc() # 가베지 컬렉션(Garbage Collection)을 호출해 현재 사용하지 않는 변수들을 메모리에서 삭제하기 위한 명령</code></pre>
 <pre><code>##          used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells 489169 26.2     940480 50.3   750400 40.1
-## Vcells 890844  6.8    1650153 12.6  1281029  9.8</code></pre>
+## Ncells 489184 26.2     940480 50.3   750400 40.1
+## Vcells 891010  6.8    1650153 12.6  1268050  9.7</code></pre>
 <pre class="r"><code>v &lt;- 1:9999
 for( i in 1:9999) {
   for( j in 1:9999) {

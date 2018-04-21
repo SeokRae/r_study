@@ -226,7 +226,7 @@ div.tocify {
 <div id="-" class="section level1">
 <h1><span class="header-section-number">1</span> 데이터 조작</h1>
 <ul>
-<li><p>R에서의 벡터 기반의 처리는 개별 원소를 for 루프 등으로 하나씩 보면서 처리하는 방식보다 종종 빠르게 수행될 뿐만 아니라 손쉽게 병렬화가 가능하다.</p></li>
+<li><p>R에서의 <strong>벡터 기반의 처리</strong>는 개별 원소를 for 루프 등으로 하나씩 보면서 처리하는 방식보다 종종 빠르게 수행될 뿐만 아니라 손쉽게 병렬화가 가능하다.</p></li>
 <li><p>데이터의 효율적인 처리를 위해서는 R이외에 다른 언어를 사용해 미리 데이터를 처리하여 CSV나 TSV형식으로 파일을 저장한 뒤 이를 R에서 읽어들이거나, R에서 MySQL에 직접 접근하면서 데이터를 처리하는 것도 한가지 방법이 될 수 있다.</p></li>
 </ul>
 <div id="iris-" class="section level2">
@@ -246,6 +246,432 @@ div.tocify {
 <blockquote>
 <p>iris 데이터 보기</p>
 </blockquote>
+<pre class="r"><code>head(iris) # 상위 몇개 데이터 확인</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<pre class="r"><code>str(iris) # iris 객체의 내부 구조확인</code></pre>
+<pre><code>## 'data.frame':    150 obs. of  5 variables:
+##  $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ Species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<ul>
+<li>iris 객체에는 붓꽃 데이터가 데이터 프레임으로 저장</li>
+<li>iris3에는 3차원 배열 형태로 저장</li>
+</ul>
+<pre class="r"><code>iris3</code></pre>
+<pre><code>## , , Setosa
+## 
+##       Sepal L. Sepal W. Petal L. Petal W.
+##  [1,]      5.1      3.5      1.4      0.2
+##  [2,]      4.9      3.0      1.4      0.2
+##  [3,]      4.7      3.2      1.3      0.2
+##  [4,]      4.6      3.1      1.5      0.2
+##  [5,]      5.0      3.6      1.4      0.2
+##  [6,]      5.4      3.9      1.7      0.4
+##  [7,]      4.6      3.4      1.4      0.3
+##  [8,]      5.0      3.4      1.5      0.2
+##  [9,]      4.4      2.9      1.4      0.2
+## [10,]      4.9      3.1      1.5      0.1
+## [11,]      5.4      3.7      1.5      0.2
+## [12,]      4.8      3.4      1.6      0.2
+## [13,]      4.8      3.0      1.4      0.1
+## [14,]      4.3      3.0      1.1      0.1
+## [15,]      5.8      4.0      1.2      0.2
+## [16,]      5.7      4.4      1.5      0.4
+## [17,]      5.4      3.9      1.3      0.4
+## [18,]      5.1      3.5      1.4      0.3
+## [19,]      5.7      3.8      1.7      0.3
+## [20,]      5.1      3.8      1.5      0.3
+## [21,]      5.4      3.4      1.7      0.2
+## [22,]      5.1      3.7      1.5      0.4
+## [23,]      4.6      3.6      1.0      0.2
+## [24,]      5.1      3.3      1.7      0.5
+## [25,]      4.8      3.4      1.9      0.2
+## [26,]      5.0      3.0      1.6      0.2
+## [27,]      5.0      3.4      1.6      0.4
+## [28,]      5.2      3.5      1.5      0.2
+## [29,]      5.2      3.4      1.4      0.2
+## [30,]      4.7      3.2      1.6      0.2
+## [31,]      4.8      3.1      1.6      0.2
+## [32,]      5.4      3.4      1.5      0.4
+## [33,]      5.2      4.1      1.5      0.1
+## [34,]      5.5      4.2      1.4      0.2
+## [35,]      4.9      3.1      1.5      0.2
+## [36,]      5.0      3.2      1.2      0.2
+## [37,]      5.5      3.5      1.3      0.2
+## [38,]      4.9      3.6      1.4      0.1
+## [39,]      4.4      3.0      1.3      0.2
+## [40,]      5.1      3.4      1.5      0.2
+## [41,]      5.0      3.5      1.3      0.3
+## [42,]      4.5      2.3      1.3      0.3
+## [43,]      4.4      3.2      1.3      0.2
+## [44,]      5.0      3.5      1.6      0.6
+## [45,]      5.1      3.8      1.9      0.4
+## [46,]      4.8      3.0      1.4      0.3
+## [47,]      5.1      3.8      1.6      0.2
+## [48,]      4.6      3.2      1.4      0.2
+## [49,]      5.3      3.7      1.5      0.2
+## [50,]      5.0      3.3      1.4      0.2
+## 
+## , , Versicolor
+## 
+##       Sepal L. Sepal W. Petal L. Petal W.
+##  [1,]      7.0      3.2      4.7      1.4
+##  [2,]      6.4      3.2      4.5      1.5
+##  [3,]      6.9      3.1      4.9      1.5
+##  [4,]      5.5      2.3      4.0      1.3
+##  [5,]      6.5      2.8      4.6      1.5
+##  [6,]      5.7      2.8      4.5      1.3
+##  [7,]      6.3      3.3      4.7      1.6
+##  [8,]      4.9      2.4      3.3      1.0
+##  [9,]      6.6      2.9      4.6      1.3
+## [10,]      5.2      2.7      3.9      1.4
+## [11,]      5.0      2.0      3.5      1.0
+## [12,]      5.9      3.0      4.2      1.5
+## [13,]      6.0      2.2      4.0      1.0
+## [14,]      6.1      2.9      4.7      1.4
+## [15,]      5.6      2.9      3.6      1.3
+## [16,]      6.7      3.1      4.4      1.4
+## [17,]      5.6      3.0      4.5      1.5
+## [18,]      5.8      2.7      4.1      1.0
+## [19,]      6.2      2.2      4.5      1.5
+## [20,]      5.6      2.5      3.9      1.1
+## [21,]      5.9      3.2      4.8      1.8
+## [22,]      6.1      2.8      4.0      1.3
+## [23,]      6.3      2.5      4.9      1.5
+## [24,]      6.1      2.8      4.7      1.2
+## [25,]      6.4      2.9      4.3      1.3
+## [26,]      6.6      3.0      4.4      1.4
+## [27,]      6.8      2.8      4.8      1.4
+## [28,]      6.7      3.0      5.0      1.7
+## [29,]      6.0      2.9      4.5      1.5
+## [30,]      5.7      2.6      3.5      1.0
+## [31,]      5.5      2.4      3.8      1.1
+## [32,]      5.5      2.4      3.7      1.0
+## [33,]      5.8      2.7      3.9      1.2
+## [34,]      6.0      2.7      5.1      1.6
+## [35,]      5.4      3.0      4.5      1.5
+## [36,]      6.0      3.4      4.5      1.6
+## [37,]      6.7      3.1      4.7      1.5
+## [38,]      6.3      2.3      4.4      1.3
+## [39,]      5.6      3.0      4.1      1.3
+## [40,]      5.5      2.5      4.0      1.3
+## [41,]      5.5      2.6      4.4      1.2
+## [42,]      6.1      3.0      4.6      1.4
+## [43,]      5.8      2.6      4.0      1.2
+## [44,]      5.0      2.3      3.3      1.0
+## [45,]      5.6      2.7      4.2      1.3
+## [46,]      5.7      3.0      4.2      1.2
+## [47,]      5.7      2.9      4.2      1.3
+## [48,]      6.2      2.9      4.3      1.3
+## [49,]      5.1      2.5      3.0      1.1
+## [50,]      5.7      2.8      4.1      1.3
+## 
+## , , Virginica
+## 
+##       Sepal L. Sepal W. Petal L. Petal W.
+##  [1,]      6.3      3.3      6.0      2.5
+##  [2,]      5.8      2.7      5.1      1.9
+##  [3,]      7.1      3.0      5.9      2.1
+##  [4,]      6.3      2.9      5.6      1.8
+##  [5,]      6.5      3.0      5.8      2.2
+##  [6,]      7.6      3.0      6.6      2.1
+##  [7,]      4.9      2.5      4.5      1.7
+##  [8,]      7.3      2.9      6.3      1.8
+##  [9,]      6.7      2.5      5.8      1.8
+## [10,]      7.2      3.6      6.1      2.5
+## [11,]      6.5      3.2      5.1      2.0
+## [12,]      6.4      2.7      5.3      1.9
+## [13,]      6.8      3.0      5.5      2.1
+## [14,]      5.7      2.5      5.0      2.0
+## [15,]      5.8      2.8      5.1      2.4
+## [16,]      6.4      3.2      5.3      2.3
+## [17,]      6.5      3.0      5.5      1.8
+## [18,]      7.7      3.8      6.7      2.2
+## [19,]      7.7      2.6      6.9      2.3
+## [20,]      6.0      2.2      5.0      1.5
+## [21,]      6.9      3.2      5.7      2.3
+## [22,]      5.6      2.8      4.9      2.0
+## [23,]      7.7      2.8      6.7      2.0
+## [24,]      6.3      2.7      4.9      1.8
+## [25,]      6.7      3.3      5.7      2.1
+## [26,]      7.2      3.2      6.0      1.8
+## [27,]      6.2      2.8      4.8      1.8
+## [28,]      6.1      3.0      4.9      1.8
+## [29,]      6.4      2.8      5.6      2.1
+## [30,]      7.2      3.0      5.8      1.6
+## [31,]      7.4      2.8      6.1      1.9
+## [32,]      7.9      3.8      6.4      2.0
+## [33,]      6.4      2.8      5.6      2.2
+## [34,]      6.3      2.8      5.1      1.5
+## [35,]      6.1      2.6      5.6      1.4
+## [36,]      7.7      3.0      6.1      2.3
+## [37,]      6.3      3.4      5.6      2.4
+## [38,]      6.4      3.1      5.5      1.8
+## [39,]      6.0      3.0      4.8      1.8
+## [40,]      6.9      3.1      5.4      2.1
+## [41,]      6.7      3.1      5.6      2.4
+## [42,]      6.9      3.1      5.1      2.3
+## [43,]      5.8      2.7      5.1      1.9
+## [44,]      6.8      3.2      5.9      2.3
+## [45,]      6.7      3.3      5.7      2.5
+## [46,]      6.7      3.0      5.2      2.3
+## [47,]      6.3      2.5      5.0      1.9
+## [48,]      6.5      3.0      5.2      2.0
+## [49,]      6.2      3.4      5.4      2.3
+## [50,]      5.9      3.0      5.1      1.8</code></pre>
+<pre><code> - 데이터 셋 목록 확인하기 'library(help=datasets)'
+ - 실제 데이터 사용 시 'data(데이터 셋 이름)'의 형태로 하기</code></pre>
+<pre class="r"><code>data(mtcars)
+head(mtcars)</code></pre>
+<pre><code>##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</code></pre>
+<ul>
+<li>mtcars 데이터 셋의 상세 내용 확인 ?mtcars 또는 help(mtcars) 사용</li>
+</ul>
+</div>
+<div id="-" class="section level2">
+<h2><span class="header-section-number">1.2</span> 파일 입출력</h2>
+<div id="csv-" class="section level3">
+<h3><span class="header-section-number">1.2.1</span> CSV파일 입출력</h3>
+<ul>
+<li>CSV 파일 읽고자 할 때 read.csv() 사용</li>
+<li>read.csv() 함수는 파일명과 첫째행이 header인지 구분하기 위한 파라미터를 받는다.</li>
+<li>read.csv(파일명, header=TRUE)와 같은 형식으로 호출</li>
+</ul>
+<blockquote>
+<p>read.csv()로 파일읽기</p>
+</blockquote>
+<pre class="r"><code>x &lt;- read.csv(&quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/a.csv&quot;)
+x</code></pre>
+<pre><code>##   id    name score
+## 1  1 Mr. Foo    95
+## 2  2 Ms. Bar    97
+## 3  3 Mr. Baz    92</code></pre>
+<pre class="r"><code>str(x) # 읽어들인 파일은 데이터 프레임으로 반환된다.</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : Factor w/ 3 levels &quot;Mr. Baz&quot;,&quot;Mr. Foo&quot;,..: 2 3 1
+##  $ score: int  95 97 92</code></pre>
+<ul>
+<li>만약 csv 파일에 헤더행이 없다면 header=FALSE를 지정한다.</li>
+<li>이 경우 열의 이름이 주어지지 않게 되므로 names()를 사용해 별도로 열이름을 지정해야 한다.</li>
+</ul>
+<pre class="r"><code>x &lt;- read.csv(&quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/b.csv&quot;, header=FALSE)
+x</code></pre>
+<pre><code>##   V1      V2 V3
+## 1  1 Mr. Foo 95
+## 2  2 Ms. Bar 97
+## 3  3 Mr. Baz 92</code></pre>
+<pre class="r"><code>names(x) &lt;- c(&quot;id&quot;, &quot;name&quot;, &quot;score&quot;)
+x</code></pre>
+<pre><code>##   id    name score
+## 1  1 Mr. Foo    95
+## 2  2 Ms. Bar    97
+## 3  3 Mr. Baz    92</code></pre>
+<pre class="r"><code>str(x) # 'name'열이 모두 Factor형태로 변환, 실제 데이터 분석을 할때에는 성명과 같은 문자열 속성을 사용할 일은 거의 없다.</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : Factor w/ 3 levels &quot;Mr. Baz&quot;,&quot;Mr. Foo&quot;,..: 2 3 1
+##  $ score: int  95 97 92</code></pre>
+<pre class="r"><code>x$name = as.character(x$name)
+str(x) # 'name'열이 chr 로 바뀌었는지 확인</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : chr  &quot;Mr. Foo&quot; &quot;Ms. Bar&quot; &quot;Mr. Baz&quot;
+##  $ score: int  95 97 92</code></pre>
+<pre class="r"><code># 형변환 하는 것이 번거로울때에는 처음부터 문자열을 Factor가 아니라 문자열 타입으로 읽어들어들이도록 stringsAsFactor=TRUE를지정
+
+x &lt;- read.csv(&quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/a.csv&quot;, stringsAsFactors = FALSE)
+str(x)</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : chr  &quot;Mr. Foo&quot; &quot;Ms. Bar&quot; &quot;Mr. Baz&quot;
+##  $ score: int  95 97 92</code></pre>
+<ul>
+<li>데이터에 다음과 같이 NA를 지정하는 문자열(NIL)이 저장되어 있을 때도 있다.</li>
+</ul>
+<pre class="r"><code>x &lt;- read.csv(&quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/c.csv&quot;)
+x</code></pre>
+<pre><code>##   id    name score
+## 1  1 Mr. Foo    95
+## 2  2 Ms. Bar   NIL
+## 3  3 Mr. Baz    92</code></pre>
+<pre class="r"><code>str(x)</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : Factor w/ 3 levels &quot;Mr. Baz&quot;,&quot;Mr. Foo&quot;,..: 2 3 1
+##  $ score: Factor w/ 3 levels &quot;92&quot;,&quot;95&quot;,&quot;NIL&quot;: 2 3 1</code></pre>
+<ul>
+<li>데이터를 read.csv()로 읽어들이면 NIL이 문자열로 인식되서 95, 92가 모두 문자열로 변환된다.</li>
+<li>이와 같은 결과를 피하기 위해서 na.strings 인자를 사용한다.</li>
+<li>na.strings의 기본값은 “NA”로서 NA라는 문자열이 주어지면 이를 R이 인식하는 NA로 바꿔준다.</li>
+</ul>
+<pre class="r"><code>x &lt;- read.csv(&quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/c.csv&quot;, na.strings=c(&quot;NIL&quot;))
+str(x)</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : Factor w/ 3 levels &quot;Mr. Baz&quot;,&quot;Mr. Foo&quot;,..: 2 3 1
+##  $ score: int  95 NA 92</code></pre>
+<pre class="r"><code># is.na()로 확인하여 결과 NIL이 NA로 잘 변환되었음을 체크
+is.na(x$score) </code></pre>
+<pre><code>## [1] FALSE  TRUE FALSE</code></pre>
+<ul>
+<li>데이터를 파일로 저장</li>
+</ul>
+<pre class="r"><code># CSV형태로 파일 저장 시, rownames을 저장하지 않도록 지정
+write.csv(x, &quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/d.csv&quot;, row.names=F)
+
+x &lt;- read.csv(&quot;C:/Users/SeokRae Kim/Desktop/2018 4학년 1학기/빅데이터 기술/R 프로그래밍/r_study/sample/d.csv&quot;)
+str(x) </code></pre>
+<pre><code>## 'data.frame':    3 obs. of  3 variables:
+##  $ id   : int  1 2 3
+##  $ name : Factor w/ 3 levels &quot;Mr. Baz&quot;,&quot;Mr. Foo&quot;,..: 2 3 1
+##  $ score: int  95 NA 92</code></pre>
+<pre class="r"><code># d.csv 확인 결과
+# &quot;id&quot;,&quot;name&quot;,&quot;score&quot;
+#1,&quot;Mr. Foo&quot;,95
+#2,&quot;Ms. Bar&quot;,NA
+#3,&quot;Mr. Baz&quot;,92</code></pre>
+<ul>
+<li>CSV 파일의 첫열은 행번호 1,2,3을 의미하는데 이 값이 데이터 저장에 꼭 필요한 것이 아니므로 생략</li>
+</ul>
+</div>
+</div>
+<div id="save-load" class="section level2">
+<h2><span class="header-section-number">1.3</span> save(), load()</h2>
+<ul>
+<li>데이터를 다양한 알고리즘으로 처리한 뒤 저장할 필요가 있다면 R객체를 그대로 파일로 저장</li>
+</ul>
+<blockquote>
+<p>두 벡터를 xy.RData 파일에 저장</p>
+</blockquote>
+<pre class="r"><code>x &lt;- 1:5
+y &lt;- 6:10
+save(x, y, file=&quot;xy.RData&quot;) # 파일에 저장</code></pre>
+<ul>
+<li>파일로부터 데이터를 불러들이는 함수는 load()</li>
+</ul>
+<pre class="r"><code>rm(list=ls()) # 메모리 상에 있는 모든 객체를 삭제
+#x
+#y
+load(&quot;xy.RData&quot;) # 파일로부터 x, y 객체를 불러 메모리에 저장
+x</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code>y</code></pre>
+<pre><code>## [1]  6  7  8  9 10</code></pre>
+</div>
+<div id="rbind-cbind" class="section level2">
+<h2><span class="header-section-number">1.4</span> rbind(), cbind()</h2>
+<ul>
+<li>행 또는 열형태로 주어진 데이터를 합쳐서 행렬 또는 데이터 프레임을 만드는데 사용</li>
+</ul>
+<pre class="r"><code>rbind(c(1,2,3), c(4,5,6)) # 두 개의 벡터를 하나의 행렬로 합치기</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    2    3
+## [2,]    4    5    6</code></pre>
+<pre class="r"><code>x &lt;- data.frame(
+  id=c(1,2)
+  , name=c(&quot;a&quot;, &quot;b&quot;)
+  # 만약 stringsAsFactor를 지정하지 않으면 &quot;a&quot;, &quot;b&quot;는 범주형데이터로 취급되어 이름을 표현하려는 목적에 어긋나게 된다.
+  , stringsAsFactors = F 
+)
+x</code></pre>
+<pre><code>##   id name
+## 1  1    a
+## 2  2    b</code></pre>
+<pre class="r"><code>str(x)</code></pre>
+<pre><code>## 'data.frame':    2 obs. of  2 variables:
+##  $ id  : num  1 2
+##  $ name: chr  &quot;a&quot; &quot;b&quot;</code></pre>
+<pre class="r"><code>y &lt;- rbind(x, c(3, &quot;c&quot;)) # 데이터프레임에 rbind()를 사용하여 행을 합치기
+y</code></pre>
+<pre><code>##   id name
+## 1  1    a
+## 2  2    b
+## 3  3    c</code></pre>
+<ul>
+<li>cbind()는 주어진 인자를 열(column)로 취급하여 데이터를 합친다.</li>
+</ul>
+<pre class="r"><code>cbind(
+  c(1,2,3)
+  ,c(4,5,6)
+)</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    4
+## [2,]    2    5
+## [3,]    3    6</code></pre>
+<ul>
+<li>cbind()를 사용하여 데이터 프레임에 새로운 행을 추가</li>
+</ul>
+<pre class="r"><code>y &lt;- cbind(
+  x
+  , greek = c(&quot;alpha&quot;, &quot;beta&quot;)
+)
+y</code></pre>
+<pre><code>##   id name greek
+## 1  1    a alpha
+## 2  2    b  beta</code></pre>
+<pre class="r"><code>str(y)</code></pre>
+<pre><code>## 'data.frame':    2 obs. of  3 variables:
+##  $ id   : num  1 2
+##  $ name : chr  &quot;a&quot; &quot;b&quot;
+##  $ greek: Factor w/ 2 levels &quot;alpha&quot;,&quot;beta&quot;: 1 2</code></pre>
+<pre class="r"><code>y &lt;- cbind(
+  x
+  , greek = c(&quot;alpha&quot;, &quot;beta&quot;)
+  , stringsAsFactors = F # greek열을 문자열 자료로 형변환, 생략시 범주형 자료인 Factor가 된다.
+)
+str(y)</code></pre>
+<pre><code>## 'data.frame':    2 obs. of  3 variables:
+##  $ id   : num  1 2
+##  $ name : chr  &quot;a&quot; &quot;b&quot;
+##  $ greek: chr  &quot;alpha&quot; &quot;beta&quot;</code></pre>
+<ul>
+<li>데이터 프레임에 새로운 열을 추가할 때는 cbind()를 사용하지 않고 ‘변수명$컬럼명 &lt;- 데이터’ 형태로도 열을 추가할 수 있다.</li>
+<li>그 내용은 데이터프레임(Data Frame)을 참고</li>
+</ul>
+</div>
+<div id="apply-" class="section level2">
+<h2><span class="header-section-number">1.5</span> apply 함수들</h2>
+<ul>
+<li>다양한 벡터 또는 행렬데이터에 임의의 함수를 적용한 결과를 얻기 위한 apply의 함수들이 있다.</li>
+<li>벡터, 행렬, 리스트, 데이터 프레임에 적용할 함수를 명시하는 형태</li>
+<li>apply, lapply, sapply, tapply에 대해 알아본더.</li>
+</ul>
+<div id="apply" class="section level3">
+<h3><span class="header-section-number">1.5.1</span> apply()</h3>
+<ul>
+<li>행렬의 행 또는 열방향으로 특정 함수를 적용</li>
+<li>apply(행렬, 방향, 함수) 형태로 호출</li>
+<li>‘방향’ 1 - 행, 2 - 열</li>
+<li>apply()를 수행한 결과 값은 <strong>벡터, 배열, 리스트</strong> 중 적합한 것으로 반환</li>
+</ul>
+<pre class="r"><code>d &lt;- matrix(1:9, ncol=3)
+d</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    4    7
+## [2,]    2    5    8
+## [3,]    3    6    9</code></pre>
+<pre class="r"><code>apply(d, 1, sum) # 행렬의 각 행의 합을 구하기</code></pre>
+<pre><code>## [1] 12 15 18</code></pre>
+<pre class="r"><code>apply(d, 2, sum) # 행렬의 각 열의 합을 구하기</code></pre>
+<pre><code>## [1]  6 15 24</code></pre>
+<ul>
+<li>apply()를 사용하여 iris 데이터의 Sepal.Length, Sepal.Width, Petal.Length, Petal.Width 컬럼의 합을 구해보자.</li>
+</ul>
 <pre class="r"><code>head(iris)</code></pre>
 <pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ## 1          5.1         3.5          1.4         0.2  setosa
@@ -254,6 +680,1225 @@ div.tocify {
 ## 4          4.6         3.1          1.5         0.2  setosa
 ## 5          5.0         3.6          1.4         0.2  setosa
 ## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<pre class="r"><code># iris[ , 1:4] # iris의 모든 행, 4개의 열의 데이터를 출력
+# ##     Sepal.Length Sepal.Width Petal.Length Petal.Width
+# ## 1            5.1         3.5          1.4         0.2
+# ## 2            4.9         3.0          1.4         0.2
+# ## 3            4.7         3.2          1.3         0.2
+# ...
+# ## 148          6.5         3.0          5.2         2.0
+# ## 149          6.2         3.4          5.4         2.3
+# ## 150          5.9         3.0          5.1         1.8
+apply(iris[ , 1:4], 2, sum)</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##        876.5        458.6        563.7        179.9</code></pre>
+<ul>
+<li>빈번한 행 또는 열의 합 계산으로 인한 rowSums(), colSums() 함수가 정의</li>
+</ul>
+<pre class="r"><code>colSums(iris[, 1:4]) # apply(iris[ , 1:4], 2, sum)</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##        876.5        458.6        563.7        179.9</code></pre>
+<pre class="r"><code>colMeans(iris[, 1:4]) # iris의 모든 행, 4개의 열 각각의 평균을 구하기</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333</code></pre>
+</div>
+<div id="lapply" class="section level3">
+<h3><span class="header-section-number">1.5.2</span> lapply()</h3>
+<ul>
+<li>lapply()는 lapply(X, 함수)의 형태로 호출</li>
+<li>’X’는 벡터 또는 리스트</li>
+<li>’함수’는 ’X’내 각 요소에 적용할 함수</li>
+<li>함수를 적용한 <strong>결과는 리스트</strong>로 반환</li>
+</ul>
+<pre class="r"><code>result &lt;- lapply(1:3, function(x) { x*2 } )
+# 리스트의 각 값은 [[n]]형태로 접근할 수 있다.
+result</code></pre>
+<pre><code>## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 4
+## 
+## [[3]]
+## [1] 6</code></pre>
+<pre class="r"><code>result[[1]]</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code># 리스트로 나온 결과를 다시 벡터로 변환하고 싶을 때
+unlist(result) </code></pre>
+<pre><code>## [1] 2 4 6</code></pre>
+<ul>
+<li>lapply()는 인자로 리스트를 받을 수 있다.</li>
+</ul>
+<pre class="r"><code>x &lt;- list(a=1:3, b=4:6)
+x</code></pre>
+<pre><code>## $a
+## [1] 1 2 3
+## 
+## $b
+## [1] 4 5 6</code></pre>
+<pre class="r"><code>lapply(x, mean)</code></pre>
+<pre><code>## $a
+## [1] 2
+## 
+## $b
+## [1] 5</code></pre>
+<ul>
+<li>데이터프레임에 lapply()적용</li>
+</ul>
+<pre class="r"><code>lapply(iris[, 1:4], mean)</code></pre>
+<pre><code>## $Sepal.Length
+## [1] 5.843333
+## 
+## $Sepal.Width
+## [1] 3.057333
+## 
+## $Petal.Length
+## [1] 3.758
+## 
+## $Petal.Width
+## [1] 1.199333</code></pre>
+<pre class="r"><code># 벡터 형태로 보고 싶을 때
+unlist(lapply(iris[, 1:4], mean))</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333</code></pre>
+<pre class="r"><code># 각 열의 평균은 colMeans()로 계산
+colMeans(iris[, 1:4])</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333</code></pre>
+<ul>
+<li>데이터 프레임을 처리한 결과를 리스트로 얻게되면, 그 리스트를 다시 데이터프레임으로 변환할 필요가 있을 때 단계</li>
+</ul>
+<pre><code> 1. unlist()를 통해 리스트를 벡터로 변환
+ 2. matrix()를 사용해 벡터를 행렬로 변환
+ 3. as.data.frame()을 사용해 행렬을 데이터 프레임으로 변환
+ 4. names()를 사용해 리스트로부터 변수명을 얻어와 데이터 프레임의 각 열에 이름을 부여</code></pre>
+<pre class="r"><code>x &lt;- lapply(iris[, 1:4], mean)
+y &lt;- unlist(x)
+z &lt;- matrix(
+  y
+  , ncol=4
+  , byrow=TRUE
+)
+result &lt;- as.data.frame(z)
+names(result) &lt;- names(iris[, 1:4])
+result</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1     5.843333    3.057333        3.758    1.199333</code></pre>
+<ul>
+<li>함수 중첩으로 구하기</li>
+</ul>
+<pre class="r"><code>d &lt;- as.data.frame(matrix(unlist(lapply(iris[, 1:4], mean))
+                   , ncol= 4
+                   , byrow= TRUE)
+)
+names(d) &lt;- names(iris[, 1:4])
+d</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1     5.843333    3.057333        3.758    1.199333</code></pre>
+<ul>
+<li>‘do.call(호출할 함수, 파라미터)’ 사용하여 같은 값을 출력</li>
+</ul>
+<pre class="r"><code># do.call을 사용해 lapply()의 결과로 나온 리스트 내 요소 하나 하나를 cbind()의 파라미터로 넘기는 작업
+data.frame(do.call(cbind, lapply(iris[, 1:4], mean)))</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1     5.843333    3.057333        3.758    1.199333</code></pre>
+<ul>
+<li>unlist() 후 matrix를 거쳐 데이터 프레임으로 변환하는 방법의 문제점</li>
+<li>unlist()는 벡터를 반환, 벡터는 한 가지 데이터 타입만 저장가능</li>
+</ul>
+<pre class="r"><code># 문자열과 숫자가 혼합된 경우 unlist()가 문자열을 모두 엉뚱한 값으로 바꿔버린다.
+x &lt;- list(data.frame(name=&quot;foo&quot;, value=1)
+          , data.frame(name=&quot;bar&quot;, value=2))
+unlist(x)</code></pre>
+<pre><code>##  name value  name value 
+##     1     1     1     2</code></pre>
+<ul>
+<li>데이터 타입이 혼합된 경우 do.call()을 사용</li>
+</ul>
+<pre class="r"><code>x &lt;- list(data.frame(name=&quot;foo&quot;, value=1)
+          , data.frame(name=&quot;bar&quot;, value=2))
+do.call(rbind, x)</code></pre>
+<pre><code>##   name value
+## 1  foo     1
+## 2  bar     2</code></pre>
+<ul>
+<li>do.call()은 속도가 매우 느리다.</li>
+<li>데이터 양이 많다면 rbindlist를 사용해야 한다.</li>
+</ul>
+</div>
+<div id="sapply" class="section level3">
+<h3><span class="header-section-number">1.5.3</span> sapply()</h3>
+<ul>
+<li>행렬, 벡터 등으로 결과를 반환하는 함수</li>
+<li>입력으로는 벡터, 리스트, 데이터 프레임등이 쓰일 수 있다.</li>
+</ul>
+<pre class="r"><code>lapply(iris[, 1:4], mean) # 데이터의 평균 값을 리스트로 출력</code></pre>
+<pre><code>## $Sepal.Length
+## [1] 5.843333
+## 
+## $Sepal.Width
+## [1] 3.057333
+## 
+## $Petal.Length
+## [1] 3.758
+## 
+## $Petal.Width
+## [1] 1.199333</code></pre>
+<pre class="r"><code>sapply(iris[, 1:4], mean) # 데이터의 평균 값을 벡터로 출력</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333</code></pre>
+<pre class="r"><code>class(sapply(iris[, 1:4], mean))</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<ul>
+<li>sapply()에 의해 반환된 벡터는 as.data.frame()을 사용해 데이터 프레임으로 변환가능</li>
+<li>주의사항은 t(x)를 사용해 벡터의 행과 열을 바꿔주지 않으면 기대한 것과 다른 모양의 데이터 프레임을 얻게된다.</li>
+</ul>
+<pre class="r"><code>x &lt;- sapply(iris[, 1:4], mean)
+as.data.frame(x)</code></pre>
+<pre><code>##                     x
+## Sepal.Length 5.843333
+## Sepal.Width  3.057333
+## Petal.Length 3.758000
+## Petal.Width  1.199333</code></pre>
+<pre class="r"><code>as.data.frame(t(x)) # 벡터의 행과 열을 바꾸기</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width
+## 1     5.843333    3.057333        3.758    1.199333</code></pre>
+<ul>
+<li>sapply()를 각 열에 저장된 데이터의 클래스를 알아내는데 사용할 수 있다.</li>
+</ul>
+<pre class="r"><code>sapply(iris, class) # 각 열의 데이터 타입을 확인</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width      Species 
+##    &quot;numeric&quot;    &quot;numeric&quot;    &quot;numeric&quot;    &quot;numeric&quot;     &quot;factor&quot;</code></pre>
+<pre class="r"><code>str(iris)</code></pre>
+<pre><code>## 'data.frame':    150 obs. of  5 variables:
+##  $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ Species     : Factor w/ 3 levels &quot;setosa&quot;,&quot;versicolor&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<ul>
+<li>sapply()에 인자로 <strong>주어진 함수의 출력이 여러 행이라면 행렬이 반환</strong>된다.</li>
+</ul>
+<pre class="r"><code>y &lt;- sapply(iris[, 1:4], function(x) { x &gt; 3 } )
+class(y)</code></pre>
+<pre><code>## [1] &quot;matrix&quot;</code></pre>
+<pre class="r"><code>head(y)</code></pre>
+<pre><code>##      Sepal.Length Sepal.Width Petal.Length Petal.Width
+## [1,]         TRUE        TRUE        FALSE       FALSE
+## [2,]         TRUE       FALSE        FALSE       FALSE
+## [3,]         TRUE        TRUE        FALSE       FALSE
+## [4,]         TRUE        TRUE        FALSE       FALSE
+## [5,]         TRUE        TRUE        FALSE       FALSE
+## [6,]         TRUE        TRUE        FALSE       FALSE</code></pre>
+<ul>
+<li>sapply()는 한 가지 타입만 저장가능한 데이터 타입인 벡터, 행렬, 배열을 반환</li>
+<li>sapply()에 인자로 주어진 함수의 반환값에 여러가지 데이터 타입이 섞여있어서는 안된다.</li>
+<li>만약 각 컬럼들에 대해 수행한 함수의 결과 데이터 타입이 서로 다르다면, 리스트를 반환하는 lapply()나 리스트 또는 데이터 프레임을 반환할 수 있는 plyr 패키지를 사용해야 한다.</li>
+</ul>
+</div>
+<div id="tapply" class="section level3">
+<h3><span class="header-section-number">1.5.4</span> tapply</h3>
+<ul>
+<li>tapply()는 그룹별 처리를 위한 apply 함수로서 tapply(데이터, 색인, 함수)의 형태로 호출</li>
+<li>‘색인’ 데이터가 어느 그룹에 속하는지를 표현하기 위한 factor형 데이터</li>
+<li>tapply는 데이터가 주어졌을 때 각 데이터가 속한 그룹별로 주어진 함수를 수행</li>
+</ul>
+<pre class="r"><code>rep(1:10)</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>tapply(1:10 , rep(1, 10), sum)</code></pre>
+<pre><code>##  1 
+## 55</code></pre>
+<pre class="r"><code># 짝수의 합이 30, 홀수의 합이 25로 구해졌다. 
+tapply(1:10 , 1:10 %% 2 == 1, sum)</code></pre>
+<pre><code>## FALSE  TRUE 
+##    30    25</code></pre>
+<ul>
+<li>iris 데이터에서 Speecies별 Sepal.Length의 평균구하기</li>
+</ul>
+<pre class="r"><code>as.data.frame(head(iris$Sepal.Length))</code></pre>
+<pre><code>##   head(iris$Sepal.Length)
+## 1                     5.1
+## 2                     4.9
+## 3                     4.7
+## 4                     4.6
+## 5                     5.0
+## 6                     5.4</code></pre>
+<pre class="r"><code>tapply(iris$Sepal.Length, iris$Species, mean)</code></pre>
+<pre><code>##     setosa versicolor  virginica 
+##      5.006      5.936      6.588</code></pre>
+<ul>
+<li>그룹화</li>
+</ul>
+<pre class="r"><code>m &lt;- matrix(
+ 1:8
+ , ncol=2
+ , dimnames=list(
+   c(&quot;spring&quot;, &quot;summer&quot;, &quot;fall&quot;, &quot;winter&quot;)
+   , c(&quot;male&quot;, &quot;female&quot;)
+ )
+)
+m</code></pre>
+<pre><code>##        male female
+## spring    1      5
+## summer    2      6
+## fall      3      7
+## winter    4      8</code></pre>
+<pre class="r"><code># 색인의 첫번째 리스트의 1, 1, 2, 2, 1, 1, 2, 2는 차례 대로 
+# (spring, male), (summer, male), (fall, male), (winter, male), (spring, female), (summer, female), (fall, female), (winter, female)의 그룹을 나타내는 색인이다. 
+# 성별을 나타낸 1, 1, 1, 1, 2, 2, 2, 2 색인 역시 같은 방식으로 
+# 먼저 male 데이터에 그룹을 부여하고 다음으로 female 데이터에 그룹을 부여한다.
+tapply(m
+       , list(
+        c(1,1,2,2,1,1,2,2)
+        , c(1,1,1,1,2,2,2,2)
+        )
+       , sum
+      ) # 반기별 남성 셀의 값의 합과 여성 셀의 합을 구하기</code></pre>
+<pre><code>##   1  2
+## 1 3 11
+## 2 7 15</code></pre>
+<ul>
+<li>같은 클러스터에 속한 데이터들의 x좌표의 평균, y좌표의 평균을 계산하는데 사용할 수 있는데, 바로 그때 위와 같은 방식으로 색인을 부여한다.</li>
+</ul>
+</div>
+<div id="mapply" class="section level3">
+<h3><span class="header-section-number">1.5.5</span> mapply()</h3>
+<ul>
+<li>mapply()는 sapply()와 유사하지만 다수의 인자를 함수에 넘긴다는데서 차이가 있다.</li>
+</ul>
+<pre class="r"><code># mapply(함수, 첫 번째인자, 두 번째인자)
+mapply(function(i, s) {
+  sprintf(&quot;%d%s&quot;, i, s)
+}, 1:3 # 첫번째 인자
+, c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;) # 두번째 인자 
+)</code></pre>
+<pre><code>## [1] &quot;1a&quot; &quot;2b&quot; &quot;3c&quot;</code></pre>
+<ul>
+<li>mapply()에 주어진 인자는 c(1, 2, 3)과 c(“a”, “b”, “c”)이다.</li>
+<li>mapply()는 주 어진 인자들의 값들을 하나씩 묶어 (1, “a”), (2, “b”), (3, “c”)로 만들고 이를 function(i, s)에 넘긴다.</li>
+<li>sprintf()는 데이터를 문자열로 변환하는데 사용하며 인자로 데이터를 어떻게 문자열로 변환할지를 지정하는 포멧팅 문자열, 그리고 문자열로 변환할 변수들을 받는다.</li>
+<li>두 변수는 차례대로 포멧팅 문자열에 맞게 정수, 문자열로 변환된다.</li>
+<li>이런 이유로 출력이 “1a”, “2b”, “3c”로 변환된다.</li>
+</ul>
+<pre class="r"><code>mapply(mean, iris[1:4])</code></pre>
+<pre><code>## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333</code></pre>
+<ul>
+<li>따라서 mapply에는 iris의 모든 행이 나열되어 인자로 주어졌다고 볼 수 있다.</li>
+<li>mapply가 주어진 인자들을 하나씩 묶어 mean을 호출해주기에 각 행의 첫번째 열끼리 묶어 평균을 구하고</li>
+<li>다시 두번째 열끼리 묶어 평균을 구하는 작업을 반복하게 된다.</li>
+<li>그리고 그 결과 모든 열의 평균을 얻는다.</li>
+</ul>
+</div>
+</div>
+<div id="doby-" class="section level2">
+<h2><span class="header-section-number">1.6</span> doBy 패키지</h2>
+</div>
+<div id="split" class="section level2">
+<h2><span class="header-section-number">1.7</span> split()</h2>
+<ul>
+<li>split()은 데이터를 분리하는데 사용된다.</li>
+<li>split(데이터, 분리조건)</li>
+<li>split()이 반환하는 값은 리스트이다.</li>
+</ul>
+<pre class="r"><code>split(iris, iris$Species)</code></pre>
+<pre><code>## $setosa
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1           5.1         3.5          1.4         0.2  setosa
+## 2           4.9         3.0          1.4         0.2  setosa
+## 3           4.7         3.2          1.3         0.2  setosa
+## 4           4.6         3.1          1.5         0.2  setosa
+## 5           5.0         3.6          1.4         0.2  setosa
+## 6           5.4         3.9          1.7         0.4  setosa
+## 7           4.6         3.4          1.4         0.3  setosa
+## 8           5.0         3.4          1.5         0.2  setosa
+## 9           4.4         2.9          1.4         0.2  setosa
+## 10          4.9         3.1          1.5         0.1  setosa
+## 11          5.4         3.7          1.5         0.2  setosa
+## 12          4.8         3.4          1.6         0.2  setosa
+## 13          4.8         3.0          1.4         0.1  setosa
+## 14          4.3         3.0          1.1         0.1  setosa
+## 15          5.8         4.0          1.2         0.2  setosa
+## 16          5.7         4.4          1.5         0.4  setosa
+## 17          5.4         3.9          1.3         0.4  setosa
+## 18          5.1         3.5          1.4         0.3  setosa
+## 19          5.7         3.8          1.7         0.3  setosa
+## 20          5.1         3.8          1.5         0.3  setosa
+## 21          5.4         3.4          1.7         0.2  setosa
+## 22          5.1         3.7          1.5         0.4  setosa
+## 23          4.6         3.6          1.0         0.2  setosa
+## 24          5.1         3.3          1.7         0.5  setosa
+## 25          4.8         3.4          1.9         0.2  setosa
+## 26          5.0         3.0          1.6         0.2  setosa
+## 27          5.0         3.4          1.6         0.4  setosa
+## 28          5.2         3.5          1.5         0.2  setosa
+## 29          5.2         3.4          1.4         0.2  setosa
+## 30          4.7         3.2          1.6         0.2  setosa
+## 31          4.8         3.1          1.6         0.2  setosa
+## 32          5.4         3.4          1.5         0.4  setosa
+## 33          5.2         4.1          1.5         0.1  setosa
+## 34          5.5         4.2          1.4         0.2  setosa
+## 35          4.9         3.1          1.5         0.2  setosa
+## 36          5.0         3.2          1.2         0.2  setosa
+## 37          5.5         3.5          1.3         0.2  setosa
+## 38          4.9         3.6          1.4         0.1  setosa
+## 39          4.4         3.0          1.3         0.2  setosa
+## 40          5.1         3.4          1.5         0.2  setosa
+## 41          5.0         3.5          1.3         0.3  setosa
+## 42          4.5         2.3          1.3         0.3  setosa
+## 43          4.4         3.2          1.3         0.2  setosa
+## 44          5.0         3.5          1.6         0.6  setosa
+## 45          5.1         3.8          1.9         0.4  setosa
+## 46          4.8         3.0          1.4         0.3  setosa
+## 47          5.1         3.8          1.6         0.2  setosa
+## 48          4.6         3.2          1.4         0.2  setosa
+## 49          5.3         3.7          1.5         0.2  setosa
+## 50          5.0         3.3          1.4         0.2  setosa
+## 
+## $versicolor
+##     Sepal.Length Sepal.Width Petal.Length Petal.Width    Species
+## 51           7.0         3.2          4.7         1.4 versicolor
+## 52           6.4         3.2          4.5         1.5 versicolor
+## 53           6.9         3.1          4.9         1.5 versicolor
+## 54           5.5         2.3          4.0         1.3 versicolor
+## 55           6.5         2.8          4.6         1.5 versicolor
+## 56           5.7         2.8          4.5         1.3 versicolor
+## 57           6.3         3.3          4.7         1.6 versicolor
+## 58           4.9         2.4          3.3         1.0 versicolor
+## 59           6.6         2.9          4.6         1.3 versicolor
+## 60           5.2         2.7          3.9         1.4 versicolor
+## 61           5.0         2.0          3.5         1.0 versicolor
+## 62           5.9         3.0          4.2         1.5 versicolor
+## 63           6.0         2.2          4.0         1.0 versicolor
+## 64           6.1         2.9          4.7         1.4 versicolor
+## 65           5.6         2.9          3.6         1.3 versicolor
+## 66           6.7         3.1          4.4         1.4 versicolor
+## 67           5.6         3.0          4.5         1.5 versicolor
+## 68           5.8         2.7          4.1         1.0 versicolor
+## 69           6.2         2.2          4.5         1.5 versicolor
+## 70           5.6         2.5          3.9         1.1 versicolor
+## 71           5.9         3.2          4.8         1.8 versicolor
+## 72           6.1         2.8          4.0         1.3 versicolor
+## 73           6.3         2.5          4.9         1.5 versicolor
+## 74           6.1         2.8          4.7         1.2 versicolor
+## 75           6.4         2.9          4.3         1.3 versicolor
+## 76           6.6         3.0          4.4         1.4 versicolor
+## 77           6.8         2.8          4.8         1.4 versicolor
+## 78           6.7         3.0          5.0         1.7 versicolor
+## 79           6.0         2.9          4.5         1.5 versicolor
+## 80           5.7         2.6          3.5         1.0 versicolor
+## 81           5.5         2.4          3.8         1.1 versicolor
+## 82           5.5         2.4          3.7         1.0 versicolor
+## 83           5.8         2.7          3.9         1.2 versicolor
+## 84           6.0         2.7          5.1         1.6 versicolor
+## 85           5.4         3.0          4.5         1.5 versicolor
+## 86           6.0         3.4          4.5         1.6 versicolor
+## 87           6.7         3.1          4.7         1.5 versicolor
+## 88           6.3         2.3          4.4         1.3 versicolor
+## 89           5.6         3.0          4.1         1.3 versicolor
+## 90           5.5         2.5          4.0         1.3 versicolor
+## 91           5.5         2.6          4.4         1.2 versicolor
+## 92           6.1         3.0          4.6         1.4 versicolor
+## 93           5.8         2.6          4.0         1.2 versicolor
+## 94           5.0         2.3          3.3         1.0 versicolor
+## 95           5.6         2.7          4.2         1.3 versicolor
+## 96           5.7         3.0          4.2         1.2 versicolor
+## 97           5.7         2.9          4.2         1.3 versicolor
+## 98           6.2         2.9          4.3         1.3 versicolor
+## 99           5.1         2.5          3.0         1.1 versicolor
+## 100          5.7         2.8          4.1         1.3 versicolor
+## 
+## $virginica
+##     Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+## 101          6.3         3.3          6.0         2.5 virginica
+## 102          5.8         2.7          5.1         1.9 virginica
+## 103          7.1         3.0          5.9         2.1 virginica
+## 104          6.3         2.9          5.6         1.8 virginica
+## 105          6.5         3.0          5.8         2.2 virginica
+## 106          7.6         3.0          6.6         2.1 virginica
+## 107          4.9         2.5          4.5         1.7 virginica
+## 108          7.3         2.9          6.3         1.8 virginica
+## 109          6.7         2.5          5.8         1.8 virginica
+## 110          7.2         3.6          6.1         2.5 virginica
+## 111          6.5         3.2          5.1         2.0 virginica
+## 112          6.4         2.7          5.3         1.9 virginica
+## 113          6.8         3.0          5.5         2.1 virginica
+## 114          5.7         2.5          5.0         2.0 virginica
+## 115          5.8         2.8          5.1         2.4 virginica
+## 116          6.4         3.2          5.3         2.3 virginica
+## 117          6.5         3.0          5.5         1.8 virginica
+## 118          7.7         3.8          6.7         2.2 virginica
+## 119          7.7         2.6          6.9         2.3 virginica
+## 120          6.0         2.2          5.0         1.5 virginica
+## 121          6.9         3.2          5.7         2.3 virginica
+## 122          5.6         2.8          4.9         2.0 virginica
+## 123          7.7         2.8          6.7         2.0 virginica
+## 124          6.3         2.7          4.9         1.8 virginica
+## 125          6.7         3.3          5.7         2.1 virginica
+## 126          7.2         3.2          6.0         1.8 virginica
+## 127          6.2         2.8          4.8         1.8 virginica
+## 128          6.1         3.0          4.9         1.8 virginica
+## 129          6.4         2.8          5.6         2.1 virginica
+## 130          7.2         3.0          5.8         1.6 virginica
+## 131          7.4         2.8          6.1         1.9 virginica
+## 132          7.9         3.8          6.4         2.0 virginica
+## 133          6.4         2.8          5.6         2.2 virginica
+## 134          6.3         2.8          5.1         1.5 virginica
+## 135          6.1         2.6          5.6         1.4 virginica
+## 136          7.7         3.0          6.1         2.3 virginica
+## 137          6.3         3.4          5.6         2.4 virginica
+## 138          6.4         3.1          5.5         1.8 virginica
+## 139          6.0         3.0          4.8         1.8 virginica
+## 140          6.9         3.1          5.4         2.1 virginica
+## 141          6.7         3.1          5.6         2.4 virginica
+## 142          6.9         3.1          5.1         2.3 virginica
+## 143          5.8         2.7          5.1         1.9 virginica
+## 144          6.8         3.2          5.9         2.3 virginica
+## 145          6.7         3.3          5.7         2.5 virginica
+## 146          6.7         3.0          5.2         2.3 virginica
+## 147          6.3         2.5          5.0         1.9 virginica
+## 148          6.5         3.0          5.2         2.0 virginica
+## 149          6.2         3.4          5.4         2.3 virginica
+## 150          5.9         3.0          5.1         1.8 virginica</code></pre>
+<pre class="r"><code># lapply()를 적용하여 iris의 종별 Sepal.Length의 평균을 구하기 
+lapply(split(iris$Sepal.Length, iris$Species), mean)</code></pre>
+<pre><code>## $setosa
+## [1] 5.006
+## 
+## $versicolor
+## [1] 5.936
+## 
+## $virginica
+## [1] 6.588</code></pre>
+</div>
+<div id="subset" class="section level2">
+<h2><span class="header-section-number">1.8</span> subset()</h2>
+<ul>
+<li>subset()은 split과 유사하지만 전체를 부분으로 구분하는 대신 특정 부분만 취하는 용도로 사용</li>
+</ul>
+<pre class="r"><code>subset(iris, Species == &quot;setosa&quot;) # iris에서 setosa종만 출력</code></pre>
+<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1           5.1         3.5          1.4         0.2  setosa
+## 2           4.9         3.0          1.4         0.2  setosa
+## 3           4.7         3.2          1.3         0.2  setosa
+## 4           4.6         3.1          1.5         0.2  setosa
+## 5           5.0         3.6          1.4         0.2  setosa
+## 6           5.4         3.9          1.7         0.4  setosa
+## 7           4.6         3.4          1.4         0.3  setosa
+## 8           5.0         3.4          1.5         0.2  setosa
+## 9           4.4         2.9          1.4         0.2  setosa
+## 10          4.9         3.1          1.5         0.1  setosa
+## 11          5.4         3.7          1.5         0.2  setosa
+## 12          4.8         3.4          1.6         0.2  setosa
+## 13          4.8         3.0          1.4         0.1  setosa
+## 14          4.3         3.0          1.1         0.1  setosa
+## 15          5.8         4.0          1.2         0.2  setosa
+## 16          5.7         4.4          1.5         0.4  setosa
+## 17          5.4         3.9          1.3         0.4  setosa
+## 18          5.1         3.5          1.4         0.3  setosa
+## 19          5.7         3.8          1.7         0.3  setosa
+## 20          5.1         3.8          1.5         0.3  setosa
+## 21          5.4         3.4          1.7         0.2  setosa
+## 22          5.1         3.7          1.5         0.4  setosa
+## 23          4.6         3.6          1.0         0.2  setosa
+## 24          5.1         3.3          1.7         0.5  setosa
+## 25          4.8         3.4          1.9         0.2  setosa
+## 26          5.0         3.0          1.6         0.2  setosa
+## 27          5.0         3.4          1.6         0.4  setosa
+## 28          5.2         3.5          1.5         0.2  setosa
+## 29          5.2         3.4          1.4         0.2  setosa
+## 30          4.7         3.2          1.6         0.2  setosa
+## 31          4.8         3.1          1.6         0.2  setosa
+## 32          5.4         3.4          1.5         0.4  setosa
+## 33          5.2         4.1          1.5         0.1  setosa
+## 34          5.5         4.2          1.4         0.2  setosa
+## 35          4.9         3.1          1.5         0.2  setosa
+## 36          5.0         3.2          1.2         0.2  setosa
+## 37          5.5         3.5          1.3         0.2  setosa
+## 38          4.9         3.6          1.4         0.1  setosa
+## 39          4.4         3.0          1.3         0.2  setosa
+## 40          5.1         3.4          1.5         0.2  setosa
+## 41          5.0         3.5          1.3         0.3  setosa
+## 42          4.5         2.3          1.3         0.3  setosa
+## 43          4.4         3.2          1.3         0.2  setosa
+## 44          5.0         3.5          1.6         0.6  setosa
+## 45          5.1         3.8          1.9         0.4  setosa
+## 46          4.8         3.0          1.4         0.3  setosa
+## 47          5.1         3.8          1.6         0.2  setosa
+## 48          4.6         3.2          1.4         0.2  setosa
+## 49          5.3         3.7          1.5         0.2  setosa
+## 50          5.0         3.3          1.4         0.2  setosa</code></pre>
+<pre class="r"><code>#벡터간 연산에서는 AND는 &amp;&amp;가 아니라 &amp;를 사용, subset()에서도 2개 이상의 조건 나열시 &amp; 사용
+subset(iris, Species == &quot;setosa&quot; &amp; Sepal.Length &gt; 5.0)</code></pre>
+<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1           5.1         3.5          1.4         0.2  setosa
+## 6           5.4         3.9          1.7         0.4  setosa
+## 11          5.4         3.7          1.5         0.2  setosa
+## 15          5.8         4.0          1.2         0.2  setosa
+## 16          5.7         4.4          1.5         0.4  setosa
+## 17          5.4         3.9          1.3         0.4  setosa
+## 18          5.1         3.5          1.4         0.3  setosa
+## 19          5.7         3.8          1.7         0.3  setosa
+## 20          5.1         3.8          1.5         0.3  setosa
+## 21          5.4         3.4          1.7         0.2  setosa
+## 22          5.1         3.7          1.5         0.4  setosa
+## 24          5.1         3.3          1.7         0.5  setosa
+## 28          5.2         3.5          1.5         0.2  setosa
+## 29          5.2         3.4          1.4         0.2  setosa
+## 32          5.4         3.4          1.5         0.4  setosa
+## 33          5.2         4.1          1.5         0.1  setosa
+## 34          5.5         4.2          1.4         0.2  setosa
+## 37          5.5         3.5          1.3         0.2  setosa
+## 40          5.1         3.4          1.5         0.2  setosa
+## 45          5.1         3.8          1.9         0.4  setosa
+## 47          5.1         3.8          1.6         0.2  setosa
+## 49          5.3         3.7          1.5         0.2  setosa</code></pre>
+<pre class="r"><code># subset에 select 인자를 지정하면 특정 열을 선택하거나 제외할 수 있다.
+subset(iris, select=c(Sepal.Length, Species))</code></pre>
+<pre><code>##     Sepal.Length    Species
+## 1            5.1     setosa
+## 2            4.9     setosa
+## 3            4.7     setosa
+## 4            4.6     setosa
+## 5            5.0     setosa
+## 6            5.4     setosa
+## 7            4.6     setosa
+## 8            5.0     setosa
+## 9            4.4     setosa
+## 10           4.9     setosa
+## 11           5.4     setosa
+## 12           4.8     setosa
+## 13           4.8     setosa
+## 14           4.3     setosa
+## 15           5.8     setosa
+## 16           5.7     setosa
+## 17           5.4     setosa
+## 18           5.1     setosa
+## 19           5.7     setosa
+## 20           5.1     setosa
+## 21           5.4     setosa
+## 22           5.1     setosa
+## 23           4.6     setosa
+## 24           5.1     setosa
+## 25           4.8     setosa
+## 26           5.0     setosa
+## 27           5.0     setosa
+## 28           5.2     setosa
+## 29           5.2     setosa
+## 30           4.7     setosa
+## 31           4.8     setosa
+## 32           5.4     setosa
+## 33           5.2     setosa
+## 34           5.5     setosa
+## 35           4.9     setosa
+## 36           5.0     setosa
+## 37           5.5     setosa
+## 38           4.9     setosa
+## 39           4.4     setosa
+## 40           5.1     setosa
+## 41           5.0     setosa
+## 42           4.5     setosa
+## 43           4.4     setosa
+## 44           5.0     setosa
+## 45           5.1     setosa
+## 46           4.8     setosa
+## 47           5.1     setosa
+## 48           4.6     setosa
+## 49           5.3     setosa
+## 50           5.0     setosa
+## 51           7.0 versicolor
+## 52           6.4 versicolor
+## 53           6.9 versicolor
+## 54           5.5 versicolor
+## 55           6.5 versicolor
+## 56           5.7 versicolor
+## 57           6.3 versicolor
+## 58           4.9 versicolor
+## 59           6.6 versicolor
+## 60           5.2 versicolor
+## 61           5.0 versicolor
+## 62           5.9 versicolor
+## 63           6.0 versicolor
+## 64           6.1 versicolor
+## 65           5.6 versicolor
+## 66           6.7 versicolor
+## 67           5.6 versicolor
+## 68           5.8 versicolor
+## 69           6.2 versicolor
+## 70           5.6 versicolor
+## 71           5.9 versicolor
+## 72           6.1 versicolor
+## 73           6.3 versicolor
+## 74           6.1 versicolor
+## 75           6.4 versicolor
+## 76           6.6 versicolor
+## 77           6.8 versicolor
+## 78           6.7 versicolor
+## 79           6.0 versicolor
+## 80           5.7 versicolor
+## 81           5.5 versicolor
+## 82           5.5 versicolor
+## 83           5.8 versicolor
+## 84           6.0 versicolor
+## 85           5.4 versicolor
+## 86           6.0 versicolor
+## 87           6.7 versicolor
+## 88           6.3 versicolor
+## 89           5.6 versicolor
+## 90           5.5 versicolor
+## 91           5.5 versicolor
+## 92           6.1 versicolor
+## 93           5.8 versicolor
+## 94           5.0 versicolor
+## 95           5.6 versicolor
+## 96           5.7 versicolor
+## 97           5.7 versicolor
+## 98           6.2 versicolor
+## 99           5.1 versicolor
+## 100          5.7 versicolor
+## 101          6.3  virginica
+## 102          5.8  virginica
+## 103          7.1  virginica
+## 104          6.3  virginica
+## 105          6.5  virginica
+## 106          7.6  virginica
+## 107          4.9  virginica
+## 108          7.3  virginica
+## 109          6.7  virginica
+## 110          7.2  virginica
+## 111          6.5  virginica
+## 112          6.4  virginica
+## 113          6.8  virginica
+## 114          5.7  virginica
+## 115          5.8  virginica
+## 116          6.4  virginica
+## 117          6.5  virginica
+## 118          7.7  virginica
+## 119          7.7  virginica
+## 120          6.0  virginica
+## 121          6.9  virginica
+## 122          5.6  virginica
+## 123          7.7  virginica
+## 124          6.3  virginica
+## 125          6.7  virginica
+## 126          7.2  virginica
+## 127          6.2  virginica
+## 128          6.1  virginica
+## 129          6.4  virginica
+## 130          7.2  virginica
+## 131          7.4  virginica
+## 132          7.9  virginica
+## 133          6.4  virginica
+## 134          6.3  virginica
+## 135          6.1  virginica
+## 136          7.7  virginica
+## 137          6.3  virginica
+## 138          6.4  virginica
+## 139          6.0  virginica
+## 140          6.9  virginica
+## 141          6.7  virginica
+## 142          6.9  virginica
+## 143          5.8  virginica
+## 144          6.8  virginica
+## 145          6.7  virginica
+## 146          6.7  virginica
+## 147          6.3  virginica
+## 148          6.5  virginica
+## 149          6.2  virginica
+## 150          5.9  virginica</code></pre>
+<pre class="r"><code># 특정 열을 제외하고자한다면 '-'를 열이름 앞에 붙이면 된다.
+subset(iris, select=-c(Sepal.Length, Species))</code></pre>
+<pre><code>##     Sepal.Width Petal.Length Petal.Width
+## 1           3.5          1.4         0.2
+## 2           3.0          1.4         0.2
+## 3           3.2          1.3         0.2
+## 4           3.1          1.5         0.2
+## 5           3.6          1.4         0.2
+## 6           3.9          1.7         0.4
+## 7           3.4          1.4         0.3
+## 8           3.4          1.5         0.2
+## 9           2.9          1.4         0.2
+## 10          3.1          1.5         0.1
+## 11          3.7          1.5         0.2
+## 12          3.4          1.6         0.2
+## 13          3.0          1.4         0.1
+## 14          3.0          1.1         0.1
+## 15          4.0          1.2         0.2
+## 16          4.4          1.5         0.4
+## 17          3.9          1.3         0.4
+## 18          3.5          1.4         0.3
+## 19          3.8          1.7         0.3
+## 20          3.8          1.5         0.3
+## 21          3.4          1.7         0.2
+## 22          3.7          1.5         0.4
+## 23          3.6          1.0         0.2
+## 24          3.3          1.7         0.5
+## 25          3.4          1.9         0.2
+## 26          3.0          1.6         0.2
+## 27          3.4          1.6         0.4
+## 28          3.5          1.5         0.2
+## 29          3.4          1.4         0.2
+## 30          3.2          1.6         0.2
+## 31          3.1          1.6         0.2
+## 32          3.4          1.5         0.4
+## 33          4.1          1.5         0.1
+## 34          4.2          1.4         0.2
+## 35          3.1          1.5         0.2
+## 36          3.2          1.2         0.2
+## 37          3.5          1.3         0.2
+## 38          3.6          1.4         0.1
+## 39          3.0          1.3         0.2
+## 40          3.4          1.5         0.2
+## 41          3.5          1.3         0.3
+## 42          2.3          1.3         0.3
+## 43          3.2          1.3         0.2
+## 44          3.5          1.6         0.6
+## 45          3.8          1.9         0.4
+## 46          3.0          1.4         0.3
+## 47          3.8          1.6         0.2
+## 48          3.2          1.4         0.2
+## 49          3.7          1.5         0.2
+## 50          3.3          1.4         0.2
+## 51          3.2          4.7         1.4
+## 52          3.2          4.5         1.5
+## 53          3.1          4.9         1.5
+## 54          2.3          4.0         1.3
+## 55          2.8          4.6         1.5
+## 56          2.8          4.5         1.3
+## 57          3.3          4.7         1.6
+## 58          2.4          3.3         1.0
+## 59          2.9          4.6         1.3
+## 60          2.7          3.9         1.4
+## 61          2.0          3.5         1.0
+## 62          3.0          4.2         1.5
+## 63          2.2          4.0         1.0
+## 64          2.9          4.7         1.4
+## 65          2.9          3.6         1.3
+## 66          3.1          4.4         1.4
+## 67          3.0          4.5         1.5
+## 68          2.7          4.1         1.0
+## 69          2.2          4.5         1.5
+## 70          2.5          3.9         1.1
+## 71          3.2          4.8         1.8
+## 72          2.8          4.0         1.3
+## 73          2.5          4.9         1.5
+## 74          2.8          4.7         1.2
+## 75          2.9          4.3         1.3
+## 76          3.0          4.4         1.4
+## 77          2.8          4.8         1.4
+## 78          3.0          5.0         1.7
+## 79          2.9          4.5         1.5
+## 80          2.6          3.5         1.0
+## 81          2.4          3.8         1.1
+## 82          2.4          3.7         1.0
+## 83          2.7          3.9         1.2
+## 84          2.7          5.1         1.6
+## 85          3.0          4.5         1.5
+## 86          3.4          4.5         1.6
+## 87          3.1          4.7         1.5
+## 88          2.3          4.4         1.3
+## 89          3.0          4.1         1.3
+## 90          2.5          4.0         1.3
+## 91          2.6          4.4         1.2
+## 92          3.0          4.6         1.4
+## 93          2.6          4.0         1.2
+## 94          2.3          3.3         1.0
+## 95          2.7          4.2         1.3
+## 96          3.0          4.2         1.2
+## 97          2.9          4.2         1.3
+## 98          2.9          4.3         1.3
+## 99          2.5          3.0         1.1
+## 100         2.8          4.1         1.3
+## 101         3.3          6.0         2.5
+## 102         2.7          5.1         1.9
+## 103         3.0          5.9         2.1
+## 104         2.9          5.6         1.8
+## 105         3.0          5.8         2.2
+## 106         3.0          6.6         2.1
+## 107         2.5          4.5         1.7
+## 108         2.9          6.3         1.8
+## 109         2.5          5.8         1.8
+## 110         3.6          6.1         2.5
+## 111         3.2          5.1         2.0
+## 112         2.7          5.3         1.9
+## 113         3.0          5.5         2.1
+## 114         2.5          5.0         2.0
+## 115         2.8          5.1         2.4
+## 116         3.2          5.3         2.3
+## 117         3.0          5.5         1.8
+## 118         3.8          6.7         2.2
+## 119         2.6          6.9         2.3
+## 120         2.2          5.0         1.5
+## 121         3.2          5.7         2.3
+## 122         2.8          4.9         2.0
+## 123         2.8          6.7         2.0
+## 124         2.7          4.9         1.8
+## 125         3.3          5.7         2.1
+## 126         3.2          6.0         1.8
+## 127         2.8          4.8         1.8
+## 128         3.0          4.9         1.8
+## 129         2.8          5.6         2.1
+## 130         3.0          5.8         1.6
+## 131         2.8          6.1         1.9
+## 132         3.8          6.4         2.0
+## 133         2.8          5.6         2.2
+## 134         2.8          5.1         1.5
+## 135         2.6          5.6         1.4
+## 136         3.0          6.1         2.3
+## 137         3.4          5.6         2.4
+## 138         3.1          5.5         1.8
+## 139         3.0          4.8         1.8
+## 140         3.1          5.4         2.1
+## 141         3.1          5.6         2.4
+## 142         3.1          5.1         2.3
+## 143         2.7          5.1         1.9
+## 144         3.2          5.9         2.3
+## 145         3.3          5.7         2.5
+## 146         3.0          5.2         2.3
+## 147         2.5          5.0         1.9
+## 148         3.0          5.2         2.0
+## 149         3.4          5.4         2.3
+## 150         3.0          5.1         1.8</code></pre>
+</div>
+<div id="merge" class="section level2">
+<h2><span class="header-section-number">1.9</span> merge()</h2>
+<ul>
+<li>두 데이터프레임을 공통된 값을 기준으로 묶는 함수로서 데이터베이스에서 join과 같은 역할을 한다.</li>
+</ul>
+<pre class="r"><code>x &lt;- data.frame(
+  name=c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+  , math=c(1,2,3)
+  )
+y &lt;- data.frame(
+  name=c(&quot;c&quot;, &quot;b&quot;, &quot;a&quot;)
+  , english=c(4,5,6)
+)
+merge(x, y)</code></pre>
+<pre><code>##   name math english
+## 1    a    1       6
+## 2    b    2       5
+## 3    c    3       4</code></pre>
+<ul>
+<li>cbind(), rbind()는 단순하게 열 또는 행을 합치는 것이고 merge는 공통되는 컬럼 name을 기준으로 데이터를 합친다.</li>
+</ul>
+<pre class="r"><code>x &lt;- data.frame(
+  name=c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+  , math=c(1,2,3)
+)
+y &lt;- data.frame(
+  name=c(&quot;c&quot;, &quot;b&quot;, &quot;a&quot;)
+  , english=c(4,5,6)
+)
+cbind(x, y)</code></pre>
+<pre><code>##   name math name english
+## 1    a    1    c       4
+## 2    b    2    b       5
+## 3    c    3    a       6</code></pre>
+<ul>
+<li>데이터가 없는 부분까지 출력하여 전체 데이터를 합치는 방법</li>
+</ul>
+<pre class="r"><code>x &lt;- data.frame(
+  name=c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+  , math=c(1,2,3)
+)
+y &lt;- data.frame(
+  name=c(&quot;c&quot;, &quot;d&quot;, &quot;a&quot;)
+  , english=c(4,5,6)
+)
+merge(x, y, all=TRUE)</code></pre>
+<pre><code>##   name math english
+## 1    a    1       6
+## 2    b    2      NA
+## 3    c    3       4
+## 4    d   NA       5</code></pre>
+</div>
+<div id="sort-order" class="section level2">
+<h2><span class="header-section-number">1.10</span> sort(), order()</h2>
+<ul>
+<li>데이터 정렬을 위한 함수</li>
+<li>벡터를 정렬하기 위한 목적의 sort()</li>
+</ul>
+<pre class="r"><code>x &lt;- c(20, 11, 33, 50, 47)
+sort(x) # 자동 오름차순 정렬</code></pre>
+<pre><code>## [1] 11 20 33 47 50</code></pre>
+<pre class="r"><code>sort(x, decreasing = TRUE) # 내림 차순 정렬 속성 decreasing=TRUE</code></pre>
+<pre><code>## [1] 50 47 33 20 11</code></pre>
+<pre class="r"><code>x # sort()는 값을 정렬한 그 결과를 반환할 뿐이지 인자로 받은 벡터 자체는 변하지않는다.</code></pre>
+<pre><code>## [1] 20 11 33 50 47</code></pre>
+<pre class="r"><code>order(x) # 주어진 인자를 정렬하기 위한 각 요소의 색인을 반환</code></pre>
+<pre><code>## [1] 2 1 3 5 4</code></pre>
+<pre class="r"><code>order(-x) # 큰 수부터 정렬한 결과를 얻고 싶을 때 값에 -1 곱한다 .</code></pre>
+<pre><code>## [1] 4 5 3 1 2</code></pre>
+<ul>
+<li>order()를 데이터 프레임을 정렬하는데 사용할 있다.</li>
+</ul>
+<pre class="r"><code>head(iris[order(iris$Sepal.Length), ]) # 정렬의 기준이 하나일때</code></pre>
+<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 14          4.3         3.0          1.1         0.1  setosa
+## 9           4.4         2.9          1.4         0.2  setosa
+## 39          4.4         3.0          1.3         0.2  setosa
+## 43          4.4         3.2          1.3         0.2  setosa
+## 42          4.5         2.3          1.3         0.3  setosa
+## 4           4.6         3.1          1.5         0.2  setosa</code></pre>
+<pre class="r"><code>head(iris[order(iris$Sepal.Length, iris$Petal.Length), ]) # Sepal.Length로 우선정렬, 동일한 값은 Petal.Length로 정렬</code></pre>
+<pre><code>##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 14          4.3         3.0          1.1         0.1  setosa
+## 39          4.4         3.0          1.3         0.2  setosa
+## 43          4.4         3.2          1.3         0.2  setosa
+## 9           4.4         2.9          1.4         0.2  setosa
+## 42          4.5         2.3          1.3         0.3  setosa
+## 23          4.6         3.6          1.0         0.2  setosa</code></pre>
+</div>
+<div id="with-within" class="section level2">
+<h2><span class="header-section-number">1.11</span> with(), within()</h2>
+<ul>
+<li>with()는 데이터 프레임또는 리스트 내 필드를 손쉽게 접근하기 위한 함수</li>
+<li>with(data, expression) 형태</li>
+</ul>
+<pre class="r"><code># 'iris$변수명'의 형태의 코드 -&gt; with를 사용하여 iris내에서 각 필드를 곧바로 접근
+(mean(iris$Sepal.Length))</code></pre>
+<pre><code>## [1] 5.843333</code></pre>
+<pre class="r"><code>(mean(iris$Sepal.Width))</code></pre>
+<pre><code>## [1] 3.057333</code></pre>
+<pre class="r"><code>with(iris
+     ,{
+       print(mean(Sepal.Length))
+       print(mean(Sepal.Width))
+     })</code></pre>
+<pre><code>## [1] 5.843333
+## [1] 3.057333</code></pre>
+<ul>
+<li>within()은 데이터 수정시 사용한다.</li>
+</ul>
+<pre class="r"><code>x &lt;- data.frame(
+  val=c(1,2,3,4,NA,5,NA)
+)
+x</code></pre>
+<pre><code>##   val
+## 1   1
+## 2   2
+## 3   3
+## 4   4
+## 5  NA
+## 6   5
+## 7  NA</code></pre>
+<pre class="r"><code># median 함수 호출 시, na.rm=TRUE 지정하여 제외 (NA값이 포함된 채로 median()을 부르면 결과로 NA가 나오기 때문)
+x &lt;- within(x, 
+            {
+              val &lt;- ifelse(is.na(val), median(val, na.rm=TRUE), val)
+            }
+)
+x</code></pre>
+<pre><code>##   val
+## 1   1
+## 2   2
+## 3   3
+## 4   4
+## 5   3
+## 6   5
+## 7   3</code></pre>
+<pre class="r"><code>x$val[is.na(x$val)] &lt;- median(x$val, na.rm=TRUE)</code></pre>
+<ul>
+<li>iris내 일부 데이터가 결측치 일경우, 결측치를 해당 종(Species)의 중앙값으로 바꾸는 경우</li>
+</ul>
+<pre class="r"><code>data(iris)
+iris[1,1] = NA
+head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1           NA         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<pre class="r"><code>median_per_specie &lt;- sapply( split(iris$Sepal.Length, iris$Species)
+                             , median
+                             , na.rm=TRUE
+                             )
+iris &lt;- within(iris,
+               {
+                 Sepal.Length &lt;- ifelse(is.na(Sepal.Length)
+                                        , median_per_specie[Species]
+                                        , Sepal.Length
+                                        )
+               })
+head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.0         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<ul>
+<li>풀이</li>
+</ul>
+<pre class="r"><code>split(iris$Sepal.Length, iris$Species) # iris의 Sepal.Length의 데이터를 Species별로 구분하여 리스트르를 반환</code></pre>
+<pre><code>## $setosa
+##  [1] 5.0 4.9 4.7 4.6 5.0 5.4 4.6 5.0 4.4 4.9 5.4 4.8 4.8 4.3 5.8 5.7 5.4
+## [18] 5.1 5.7 5.1 5.4 5.1 4.6 5.1 4.8 5.0 5.0 5.2 5.2 4.7 4.8 5.4 5.2 5.5
+## [35] 4.9 5.0 5.5 4.9 4.4 5.1 5.0 4.5 4.4 5.0 5.1 4.8 5.1 4.6 5.3 5.0
+## 
+## $versicolor
+##  [1] 7.0 6.4 6.9 5.5 6.5 5.7 6.3 4.9 6.6 5.2 5.0 5.9 6.0 6.1 5.6 6.7 5.6
+## [18] 5.8 6.2 5.6 5.9 6.1 6.3 6.1 6.4 6.6 6.8 6.7 6.0 5.7 5.5 5.5 5.8 6.0
+## [35] 5.4 6.0 6.7 6.3 5.6 5.5 5.5 6.1 5.8 5.0 5.6 5.7 5.7 6.2 5.1 5.7
+## 
+## $virginica
+##  [1] 6.3 5.8 7.1 6.3 6.5 7.6 4.9 7.3 6.7 7.2 6.5 6.4 6.8 5.7 5.8 6.4 6.5
+## [18] 7.7 7.7 6.0 6.9 5.6 7.7 6.3 6.7 7.2 6.2 6.1 6.4 7.2 7.4 7.9 6.4 6.3
+## [35] 6.1 7.7 6.3 6.4 6.0 6.9 6.7 6.9 5.8 6.8 6.7 6.7 6.3 6.5 6.2 5.9</code></pre>
+<pre class="r"><code>sapply(
+  split(iris$Sepal.Length, iris$Species)
+  , median
+  , na.rm=TRUE
+  ) # 종별 중앙값을 구하기 위하여 sapply를 사용해 종별로 median을 부르되 median 호출 시 na.rm=TRUE를 넘겨 NA값을 제외한다.</code></pre>
+<pre><code>##     setosa versicolor  virginica 
+##        5.0        5.9        6.5</code></pre>
+</div>
+<div id="attach-detach" class="section level2">
+<h2><span class="header-section-number">1.12</span> attach(), detach()</h2>
+<ul>
+<li>attach는 인자로 주어진 데이터 프레임이나 리스트를 곧바로 접근할 수 있게 해준다.</li>
+<li>이를 해제하는 것이 detach()</li>
+</ul>
+<pre class="r"><code>#Sepal.Width
+attach(iris)
+head(Sepal.Width)</code></pre>
+<pre><code>## [1] 3.5 3.0 3.2 3.1 3.6 3.9</code></pre>
+<pre class="r"><code># ?detach
+detach(iris)
+#Sepal.Width</code></pre>
+<ul>
+<li>주의할 점은 attach()한 변수값은 detach()시 원래의 데이터 프레임에는 반영되지 않는다.</li>
+</ul>
+<pre class="r"><code>data(iris)
+head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<pre class="r"><code>attach(iris)
+Sepal.Width[1] = -1
+Sepal.Width</code></pre>
+<pre><code>##   [1] -1.0  3.0  3.2  3.1  3.6  3.9  3.4  3.4  2.9  3.1  3.7  3.4  3.0  3.0
+##  [15]  4.0  4.4  3.9  3.5  3.8  3.8  3.4  3.7  3.6  3.3  3.4  3.0  3.4  3.5
+##  [29]  3.4  3.2  3.1  3.4  4.1  4.2  3.1  3.2  3.5  3.6  3.0  3.4  3.5  2.3
+##  [43]  3.2  3.5  3.8  3.0  3.8  3.2  3.7  3.3  3.2  3.2  3.1  2.3  2.8  2.8
+##  [57]  3.3  2.4  2.9  2.7  2.0  3.0  2.2  2.9  2.9  3.1  3.0  2.7  2.2  2.5
+##  [71]  3.2  2.8  2.5  2.8  2.9  3.0  2.8  3.0  2.9  2.6  2.4  2.4  2.7  2.7
+##  [85]  3.0  3.4  3.1  2.3  3.0  2.5  2.6  3.0  2.6  2.3  2.7  3.0  2.9  2.9
+##  [99]  2.5  2.8  3.3  2.7  3.0  2.9  3.0  3.0  2.5  2.9  2.5  3.6  3.2  2.7
+## [113]  3.0  2.5  2.8  3.2  3.0  3.8  2.6  2.2  3.2  2.8  2.8  2.7  3.3  3.2
+## [127]  2.8  3.0  2.8  3.0  2.8  3.8  2.8  2.8  2.6  3.0  3.4  3.1  3.0  3.1
+## [141]  3.1  3.1  2.7  3.2  3.3  3.0  2.5  3.0  3.4  3.0</code></pre>
+<pre class="r"><code>detach(iris)
+head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+</div>
+<div id="which-which.max-which.min" class="section level2">
+<h2><span class="header-section-number">1.13</span> which(), which.max(), which.min()</h2>
+<ul>
+<li>which()는 벡터 또는 배열에서 주어진 조건을 만족하는 값이 있는 곳의 색인을 찾는다.</li>
+</ul>
+<pre class="r"><code>x &lt;- c(2, 4, 6, 7 ,10)
+x %% 2</code></pre>
+<pre><code>## [1] 0 0 0 1 0</code></pre>
+<pre class="r"><code>which(x %% 2 == 0) # 벡터에서 2로 나눈 나머지가 0인 값이 저장된 색인 찾기</code></pre>
+<pre><code>## [1] 1 2 3 5</code></pre>
+<pre class="r"><code>x[which(x %% 2 == 0)] # 벡터에서 2로 나눈 나머지가 0인 값 찾기</code></pre>
+<pre><code>## [1]  2  4  6 10</code></pre>
+<pre class="r"><code>which.min(x) # 벡터에서 최소값의 인덱스 찾기 </code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>x[which.min(x)] # 벡터에서 최소값 찾기</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>which.max(x) # 벡터에서 최대값의 인덱스 찾기 </code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>x[which.max(x)] # 벡터에서 최대값 찾기</code></pre>
+<pre><code>## [1] 10</code></pre>
+<pre class="r"><code>sort(x)[1] # which.min()</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>-sort(-x)[1] # which.max()</code></pre>
+<pre><code>## [1] 10</code></pre>
+</div>
+<div id="aggregate" class="section level2">
+<h2><span class="header-section-number">1.14</span> aggregate()</h2>
+<ul>
+<li>doBy 패키지는 데이터를 그룹별로 나눈뒤 특정 계산을 적용하는 함수</li>
+<li>aggregate()는 보다 일반적인 그룹별 연산을 위한 함수이다.</li>
+<li>aggregate(데이터, 그룹 조건, 함수) 또는 aggregate(formula, 데이터, 함수)이다.</li>
+</ul>
+<pre class="r"><code>aggregate(Sepal.Width ~ Species, iris, mean)</code></pre>
+<pre><code>##      Species Sepal.Width
+## 1     setosa       3.428
+## 2 versicolor       2.770
+## 3  virginica       2.974</code></pre>
+</div>
+<div id="stack-unstack" class="section level2">
+<h2><span class="header-section-number">1.15</span> stack(), unstack()</h2>
+<ul>
+<li>데이터 변환</li>
+</ul>
+<pre class="r"><code>x &lt;- data.frame(
+  medicine=c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+  , ctl=c(5,3,2)
+  , exp=c(4,5,7)
+)
+x</code></pre>
+<pre><code>##   medicine ctl exp
+## 1        a   5   4
+## 2        b   3   5
+## 3        c   2   7</code></pre>
+<pre class="r"><code>stacked_x &lt;- stack(x) # factor 컬럼은 stack이 되는 대상이 아니라는 의미의 오류</code></pre>
+<pre><code>## Warning in stack.data.frame(x): non-vector columns will be ignored</code></pre>
+<pre class="r"><code>stacked_x</code></pre>
+<pre><code>##   values ind
+## 1      5 ctl
+## 2      3 ctl
+## 3      2 ctl
+## 4      4 exp
+## 5      5 exp
+## 6      7 exp</code></pre>
+<pre class="r"><code>library(doBy)
+summaryBy(values ~ ind, stacked_x)</code></pre>
+<pre><code>##   ind values.mean
+## 1 ctl    3.333333
+## 2 exp    5.333333</code></pre>
+<ul>
+<li>unstack() stack()을 통해 변환된 데이터를 다시 원래 상태로 되돌리는데 사용</li>
+</ul>
+<pre class="r"><code>unstack(stacked_x, values ~ ind)</code></pre>
+<pre><code>##   ctl exp
+## 1   5   4
+## 2   3   5
+## 3   2   7</code></pre>
+<ul>
+<li>unstack()의 두 번째 인자는 formula로서, values가 데이터 프레임에 저장될 값이며,</li>
+<li>이 값을 ind에 있는 값(ctl, exp)을 컬럼으로 해서 저장해 달라는 의미를 표현</li>
+</ul>
+</div>
+<div id="rmysql-" class="section level2">
+<h2><span class="header-section-number">1.16</span> RMySQL 패키지</h2>
+<ul>
+<li>RMySQL 패키지 설치</li>
+</ul>
+<pre class="r"><code># install.packages(&quot;RMySQL&quot;)
+# library(RMySQL)
+# con &lt;- dbConnect(MySQL(), user=&quot;db_id&quot;, password=&quot;db_pwd&quot;, dbname=&quot;db_name&quot;, host=&quot;ip&quot;)
+# dbListTables(con)</code></pre>
+<ul>
+<li>dbGetQuery() 함수를 사용해 질의를 실행, 결과를 데이터 프레임으로 받는다.</li>
+</ul>
+<pre class="r"><code># dbGetQuery(con, &quot;select * from db_table&quot;)</code></pre>
 </div>
 </div>
 

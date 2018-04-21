@@ -1,11 +1,8 @@
 ---
 title: "R_Condition"
 author: "seok"
-date: "2018<eb>뀈 3<ec>썡 31<ec>씪"
+date: "2018년 3월 31일"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
   html_document:
     number_sections: yes
     toc: yes
@@ -15,7 +12,6 @@ output:
 
 # 제어문
 
- - R의 특징
  - 저장된 데이터를 한 번에 다루는 벡터연산을 수행한다는 점
  - 데이터 분석이기때문에 결측치(NA)가 중요한 주제로 떠오른다는 점
   
@@ -25,11 +21,11 @@ output:
  
 ```{r}
 if ( TRUE ) {
-print ('TRUE ')
-print ('hello ')
+  print('TRUE')
+  print('hello')
 } else {
-print ('FALSE ')
-print ('world ')
+  print('FALSE')
+  print('world')
 }
 ```
 
@@ -67,9 +63,9 @@ while ( i < 10) {
 x <- matrix(1:4, nrow=2)
 x
 x + x
-x %*% x
-t(x)
-solve(x)
+x %*% x # 행렬간의 곱
+t(x) # 전치행렬(transpose)
+solve(x) # 역행렬
 ```
 
 ## NA의 처리
@@ -86,7 +82,7 @@ solve(x)
 
 ```{r}
 sum ( c (1 , 2 , 3 , NA ) )
-sum ( c (1 , 2 , 3 , NA ) , na.rm = T )
+sum ( c (1 , 2 , 3 , NA ) , na.rm = T ) # 함수 안에 NA값이 있을 때 해당 값을 제거할 것인지 지정해주는 na.rm추가
 ```
 
 - 잘알려진 머신 러닝 패키지 중 하나인 caret:  Classification and Regression Training은 na.omit, na.pass, na.fail등을 na.action이라는 인자로 받아서 NA 처리를 어떻게 할지 결정한다.
@@ -96,13 +92,11 @@ sum ( c (1 , 2 , 3 , NA ) , na.rm = T )
 ```{r}
 x <- data.frame ( a = c (1 , 2 , 3) , b = c ( "a" , NA , "c" ) , c = c ( "a" , "b" , NA ) )
 x
-na.omit (x)
-na.pass (x)
-# na.fail (x)
+na.omit (x) # NA가 포함된 행을 제외
+na.pass (x) # NA의 포함 여부를 상관하지 않는다.
+# na.fail (x) # 데이터에 NA가 포함되어있을 경우 에러 발생
 # Error in na.fail.default ( x ) : missing values in object
 ```
-
-- na.omit은 NA가 포함된 행을 제외하고, na.pass는 NA의 포함여부를 상관하지 않으며, na.fail은 데이터에 NA가 포함되어있을 경우 에러를 내보낸다.
 
 - 따라서 NA를 어떻게 처리할지를 na.action으로 받았다면 ‘na.action(데이터 프레임)’을 실행해 현재 처리중인 데이터를 사용자가 원하는대로 정제할 수 있게 된다.
 
@@ -380,8 +374,8 @@ b <- 0
 f <- function() {
   a <- 1
   g <- function() {
-    a <<- 2
-    b <<- 2
+    a <<- 2 # 전역 변수에 접근
+    b <<- 2 # 전역 변수에 접근
     print(a)
     print(b)
   }

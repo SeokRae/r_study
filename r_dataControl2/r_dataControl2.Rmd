@@ -1,0 +1,415 @@
+---
+title: "r_dataControl2"
+author: "SeokRae"
+date: "2018년 4월 21일"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 데이터 조작2
+ - 모델을 만드는데 소요되는 시간은 전체 프로젝트의 14% 정도 해당된다.
+ - 데이터 전처리에 소요되는 시간이 크다.
+ - 데이터를 원하는 형태로 변환해야 하는 필요가 수 없이 발생한다.
+ - 데이터를 원하는 형태로 변환하는 패키지 sqldf, plyf, reshape2, data.table, foreach
+ - R코드를 더 빠르게 실행하기 위한 멀티코어 병렬처리 패키지 doMC
+ - 코드 테스트를 위한 testthat 패키지와, browser()
+ - 코드 성능 평가를 위한 system.time()과 Rprof()
+
+## sqldf 패키지
+ - SQL명령이 주어지면 자동으로 스키마를 생성하고 데이터를 테이블로 로딩한 뒤 SQL문을 수행한다.
+
+> sqldf 패키지 설치
+
+```{r}
+# install.packages("sqldf")
+# library(sqldf)
+```
+
+> sqldf()를 사용하여 iris 데이터 확인
+
+```{r}
+# sqldf("select distinct Species from iris")
+```
+
+> setosa에 속하는 데이터에서 Sepal.Length의 평균 구하기
+
+```{r}
+# sqldf("select avg(Sepal_Length) from iris where Species='setosa'")
+```
+
+ - split(), apply()등으로 해결할 경우
+```{r}
+mean(subset(iris, Species == "setosa")$Sepal.Length)
+```
+ - 각 종별 Sepal.Length의 평균
+```{r}
+# sqldf("select species, avg(sepal_length) from iris group by species")
+```
+
+ - split(), sapply()를 사용해 같은 명령 실행
+```{r}
+sapply(split(iris$Sepal.Length, iris$Species), mean)
+```
+
+```
+ sqldf 패키지에서는 디스크를 저장소로 사용한다던가, 매번 sqldf()를 수행할 때마다 데이터베이스에 데이터 프레임을 저장했다가 처리하고 삭제하는 대신 한번 만들어둔 데이터를 재사용한다던가 하는 많은 최적화가 가능하다.
+ sqldf는 다양한 저장소를 사용할 수 있으며 기본 데이터 저장소로는 sqlite를 사용한다. 따라서 속도 향상을 위한 인덱스 등을 적절히 사용할 수도 있으며, 데이터베이스 기반 기술을 활용하므로 프로그램의 속도를 매우 빠르게 높일 수 있다.
+```
+
+---
+
+## plyr 패키지
+ - plyr은 데이터를 분할하고(split), 
+ - 분할된 데이터에 특정 함수를 적용한 뒤(apply), 
+ - 그 결과를 재 조합(combine)하는 세 단계로 데이터를 처리하는 함수들을 제공
+ - plyr의 입력은 배열, 데이터 프레임, 리스트가 될 수 있다.
+ - 출력 역시 배열, 데이터 프레임, 리스트 또는 아무런 결과도 출력하지 않을 수 있다.
+ - 데이터의 분할, 계산, 조합을 한 번에 처리해 주어 여러 함수로 처리해야 할 일들을 짧은 코드로 대신해준다.
+ - 입 출력간  다양한 데이터 타입을 지원해주어 데이터 변환의 부담을 크게 덜어준다.
+ - adply()와 같이 배열을 입력으로 받는 함수들은 각 행 또는 각 열마다 데이터를 처리하기 위해 **margin을 인자**로 받는다.
+ - ddpply()와 같이 데이터 프레임을 입력으로 받는 함수들은 데이터를 분할 하는데 사용할 **그룹 변수를 인자**로 받는다.
+ 
+### adply()
+ - adply()는 배열(a)를 받아 데이터 프레임(d)를 반환하는 함수
+ - 입력이 반드시 배열일 필요는 없다.
+ - 그보다는 주어진 입력을 숫자 색인으로 읽을 수 있는가하는 점이 중요
+ - 데이터프레임도 숫자 색인으로 각 행이나 열을 접근할 수 있어 adply()를 적용할 수 있다.
+ - adply()는 인자로 데이터, margin, 함수를 입력으로 받는다.
+ - margin=1은 행, margin=2는 열 방향으로 데이터를 처리한다.
+ - apply()를 사용해도 이와 같은 처리를 할 수 있으나 apply()를 행방향으로 처리할 때 각 열에 서로 다른 데이터 타입이 섞여있다면 예상치 못한 타입 변환이 발생할 수 있다.
+```{r}
+# apply()에 숫자형 컬럼만 입력으로 주었을 경우에 그 값이 제대로 넘어온다.
+apply(iris[1:10, 1:4], 1, function(row) { print(row) })
+# apply()에 문자열이 섞이면 데이터가 모두 문자열로 바뀐다.
+apply(iris[1:10,], 1, function(row) { print(row) })
+```
+
+> apply()의 문제점
+
+```
+ - 결과적으로 apply()가 한 가지 타입만 저장할 수 있는 '행렬'로 결과를 반환했기 때문에 이러한 변환이 발생하였다.
+ - 본래 apply()는 벡터, 행렬, 리스트 중 한 가지 타입으로 결과를 반환할 수 있다.
+ - 결과가 한 행이라면 벡터를 반환, 
+ - 여러 행이라면 행렬을 반환, 
+ - 각 행마다 컬럼 객수가 다르다면 리스트를 반환
+ - 위에는 각 행의 컬럼 객수가 5로 모두 일치하므로 리스트를 반환하지 않고 행렬로 결과가 반환된 것이다.
+```
+
+> adply()로 해결
+```
+ - adply()를 사용해 결과를 데이터 프레임을 반환시키면 결과 타입이 문자열로 모두 바뀌는 현을 피할 수 있다.
+```
+
+```{r}
+# install.packages("plyr")
+# library(plyr)
+```
+
+```{r}
+#     Sepal.Length Sepal.Width Petal.Length Petal.Width    Species    V1
+# 1            5.1         3.5          1.4         0.2     setosa  TRUE
+# 2            4.9         3.0          1.4         0.2     setosa FALSE
+# 3            4.7         3.2          1.3         0.2     setosa FALSE
+# 4            4.6         3.1          1.5         0.2     setosa FALSE
+# 5            5.0         3.6          1.4         0.2     setosa  TRUE
+# 6            5.4         3.9          1.7         0.4     setosa  TRUE
+# .. 이러한 결과를 얻게 된다.
+# adply(iris,
+#      1,
+#      function(row) {
+#        row$Sepal.Length >= 5.0 & row$Species == "setosa"
+#      })
+```
+
+> 문제점
+
+```
+ - adply()에 인자로 넘긴 함수의 반환값이 단순한 boolean 값이었으므로 그 결과가 임의의 컬럼명 V1에 저장되었다.
+ - 그러나 최종 반환 값이 데이터 프레임인 경우 함수의 반환값을 데이터 프레임으로 하는 것이 안전하다.
+```
+
+> 개선방법
+```
+ - 함수가 반환하는 데이터 프레임에 변수명을 적절히 지정할 수 있다.
+ - 앞과 같은 계산을 수행하지만 함수 내부에서 데이터 프레임을 반환
+```
+
+```{r}
+#     Sepal.Length Sepal.Width Petal.Length Petal.Width    Species sepal_ge_5_setosa
+# 1            5.1         3.5          1.4         0.2     setosa              TRUE
+# 2            4.9         3.0          1.4         0.2     setosa             FALSE
+# 3            4.7         3.2          1.3         0.2     setosa             FALSE
+# 4            4.6         3.1          1.5         0.2     setosa             FALSE
+# 5            5.0         3.6          1.4         0.2     setosa              TRUE
+# .. 이와 같은 결과가 나옴
+# adply(iris,
+#       1, 
+#       function(row) {
+#         data.frame(
+#           sepal_ge_5_setosa=c(row$Sepal.Length >= 5.0 & row$Species == "setosa")
+#         )
+#      })
+```
+
+### ddply()
+ - 데이터 프레임(d)을 입력으로 받아 데이터 프레임(d)을 내보내는 함수
+ - ddply()는 인자로 데이터, 데이터를 그룹 지을 변수명, 데이터 처리에 사용할 함수를 받는다.
+ - 두번째 인자인 데이터를 그룹짓는 변수는 .()안에 기록
+
+```{r}
+#      Species sepal.width.mean
+# 1     setosa            3.428
+# 2 versicolor            2.770
+# 3  virginica            2.974
+# .. 이와 같은 결과를 나타냄
+# ddply(iris,       # 데이터
+#       .(Species), # 데이터를 그룹 지을 변수명
+#       function(sub) { # 데이터 처리에 사용할 함
+#         data.frame(sepal.width.mean = mean(sub$Sepal.Width))
+#       })
+
+# 여러 변수들을 그룹 지을 떄
+#      Species Sepal.Length > 5 sepal.width.mean
+# 1     setosa            FALSE         3.203571
+# 2     setosa             TRUE         3.713636
+# 3 versicolor            FALSE         2.233333
+# 4 versicolor             TRUE         2.804255
+# 5  virginica            FALSE         2.500000
+# 6  virginica             TRUE         2.983673
+# ddply(iris,
+#       .(Species, Sepal.Length > 5.0),
+#       function(sub) {
+#         data.frame(sepal.width.mean = mean(sub$Sepal.Width))
+#       }
+# )
+```
+
+> baseball 데이터를 통한 실습
+
+```{r}
+# 데이터 확인
+# head(baseball)
+#            id year stint team lg  g  ab  r  h X2b X3b hr rbi sb cs bb so ibb hbp sh sf gidp
+# 4   ansonca01 1871     1  RC1    25 120 29 39  11   3  0  16  6  2  2  1  NA  NA NA NA   NA
+# 44  forceda01 1871     1  WS3    32 162 45 45   9   4  0  29  8  0  4  0  NA  NA NA NA   NA
+# 68  mathebo01 1871     1  FW1    19  89 15 24   3   1  0  10  2  1  2  0  NA  NA NA NA   NA
+# 99  startjo01 1871     1  NY2    33 161 35 58   5   1  1  34  4  2  3  0  NA  NA NA NA   NA
+# 102 suttoez01 1871     1  CL1    29 128 35 45   3   7  3  23  3  1  1  0  NA  NA NA NA   NA
+# 106 whitede01 1871     1  CL1    29 146 40 47   6   5  1  21  2  2  4  1  NA  NA NA NA   NA
+
+# 선수 ansonca01의 기록 보기
+# head(subset(baseball, id == "ansonca01"))
+#            id year stint team lg  g  ab  r   h X2b X3b hr rbi sb cs bb so ibb hbp sh sf gidp
+# 4   ansonca01 1871     1  RC1    25 120 29  39  11   3  0  16  6  2  2  1  NA  NA NA NA   NA
+# 121 ansonca01 1872     1  PH1    46 217 60  90  10   7  0  50  6  6 16  3  NA  NA NA NA   NA
+# 276 ansonca01 1873     1  PH1    52 254 53 101   9   2  0  36  0  2  5  1  NA  NA NA NA   NA
+# 398 ansonca01 1874     1  PH1    55 259 51  87   8   3  0  37  6  0  4  1  NA  NA NA NA   NA
+# 525 ansonca01 1875     1  PH1    69 326 84 106  15   3  0  58 11  6  4  2  NA  NA NA NA   NA
+# 741 ansonca01 1876     1  CHN NL 66 309 63 110   9   7  2  59 NA NA 12  8  NA  NA NA NA   NA
+```
+
+> ddply() 사용하여 각 선수가 출전한 게임수의 평균을 구하기
+
+```{r}
+# ddply(데이터, .(속성명), 함수)
+# ddply(baseball, .(id), function(sub) { mean(sub$g) })
+#             id        V1
+# 1    aaronha01 143.39130
+# 2    abernte02  40.05882
+# 3    adairje01  77.66667
+# 4    adamsba01  25.36842
+# 5    adamsbo03  85.40000
+#...
+# 496  hernake01 116.00000
+# 497  hernaro01  40.10000
+# 498   herrto01  94.62500
+# 499  hershor01  27.22222
+# 500  herzobu01  93.31250
+```
+
+### transform(), summarise(), subset()
+ - adply(), ddply()에 임의의 사용자 정의 함수를 넘겨주어 분석을 수행했다.
+ - 공통적으로 자주 사용되는 유형의 계산은 transform(), summarise(), subset()을 사용해 표현 가능
+ 
+#### tramsform()
+ - base::transform()은 변수값에 대한 연산결과를 데이터 프레임의 다른 변수에 저장하는 함수
+
+> baseball 데이터에 각 행이 선수의 몇년차 통계인지를 뜻하는 cyear 컬럼을 추가
+
+```{r}
+#          id year stint team lg   g  ab   r   h X2b X3b hr rbi sb cs bb so ibb hbp sh sf gidp cyear
+# 1 aaronha01 1954     1  ML1 NL 122 468  58 131  27   6 13  69  2  2 28 39  NA   3  6  4   13     1
+# 2 aaronha01 1955     1  ML1 NL 153 602 105 189  37   9 27 106  3  1 49 61   5   3  7  4   20     2
+# 3 aaronha01 1956     1  ML1 NL 153 609 106 200  34  14 26  92  2  4 37 54   6   2  5  7   21     3
+# 4 aaronha01 1957     1  ML1 NL 151 615 118 198  27   6 44 132  1  1 57 58  15   0  0  3   13     4
+# 5 aaronha01 1958     1  ML1 NL 153 601 109 196  34   4 30  95  4  1 59 49  16   1  0  3   21     5
+# 6 aaronha01 1959     1  ML1 NL 154 629 116 223  46   7 39 123  8  0 51 54  17   4  0  9   19     6
+# 
+# head(ddply(baseball
+#            ,.(id)
+#            , transform
+#            , cyear = year - min(year) + 1))
+```
+
+ - plyr에는 transform()을 개선한 plyr::mutate() 함수가 있다.
+ - 여러 컬럼을 데이터 프레임에 추가할 때 바로 앞서 추가한 컬럼을 뒤에 추가하는 컬럼에서 참조할 수 있어 편리하다.
+
+```{r}
+# mutate를 이용해 cyear를 계산한 뒤 cyear를 참조하는 log_cyear를 계산
+# 만약 mutate가 아닌 transform을 사용하면 에러 발생
+#          id year stint team lg   g  ab   r   h X2b X3b hr rbi sb cs bb so ibb hbp sh sf gidp cyear log_cyear
+# 1 aaronha01 1954     1  ML1 NL 122 468  58 131  27   6 13  69  2  2 28 39  NA   3  6  4   13     1 0.0000000
+# 2 aaronha01 1955     1  ML1 NL 153 602 105 189  37   9 27 106  3  1 49 61   5   3  7  4   20     2 0.6931472
+# 3 aaronha01 1956     1  ML1 NL 153 609 106 200  34  14 26  92  2  4 37 54   6   2  5  7   21     3 1.0986123
+# 4 aaronha01 1957     1  ML1 NL 151 615 118 198  27   6 44 132  1  1 57 58  15   0  0  3   13     4 1.3862944
+# 5 aaronha01 1958     1  ML1 NL 153 601 109 196  34   4 30  95  4  1 59 49  16   1  0  3   21     5 1.6094379
+# 6 aaronha01 1959     1  ML1 NL 154 629 116 223  46   7 39 123  8  0 51 54  17   4  0  9   19     6 1.7917595
+# head(ddply(baseball,
+#            .(id),
+#            mutate,
+#            cyear = year - min(year) + 1,
+#            log_cyear = log(cyear)
+# ))
+```
+
+#### summarise()
+ - plyr::summarise()는 데이터의 요약 정보를 만드는데 사용하는 함수이다.
+ - transform()이 인자로 주어진 계산 결과를 새로운 컬럼에 추가한 데이터 프레임을 반환
+ - summarise()는 계산 결과를 담은 새로운 데이터 프레임을 반환한다.
+```{r}
+#          id minyear
+# 1 aaronha01    1954
+# 2 aaronha01    1955
+# 3 aaronha01    1956
+# 4 aaronha01    1957
+# 5 aaronha01    1958
+# 6 aaronha01    1959
+# baseball 데이터에서 각 선수의 최초 데이터가 몇년도에 해당하는지 출력
+# 각 id마다 최소 year를 minyear로 갖는 데이터 프레임들이 summarise()에 의해 생성
+# ddply()는 이들 데이터 프레임을 모아 하나의 데이터 프레임으로 반환
+# head(ddply(baseball,
+#            .(id),
+#            summarise,
+#            minyear=(year)
+# ))
+```
+
+```{r}
+# 여러 값 계산
+#          id minyear maxyear
+# 1 aaronha01    1954    1976
+# 2 abernte02    1955    1972
+# 3 adairje01    1958    1970
+# 4 adamsba01    1906    1926
+# 5 adamsbo03    1946    1959
+# 6 adcocjo01    1950    1966
+# head(ddply(baseball,
+#            .(id),
+#            summarise,
+#            minyear=min(year),
+#            maxyear=max(year)
+#            ))
+```
+
+#### subset()
+ - 분할별로 데이터를 추출하는데 사용
+
+```{r}
+# 각 선수별로 최대 게임을 플레이한 해의 기록을 추출
+#          id year stint team lg   g  ab   r   h X2b X3b hr rbi sb cs bb so ibb hbp sh sf gidp
+# 1 aaronha01 1963     1  ML1 NL 161 631 121 201  29   4 44 130 31  5 78 94  18   0  0  5   11
+# 2 abernte02 1965     1  CHN NL  84  18   1   3   0   0  0   2  0  0  0  7   0   1  3  0    0
+# 3 adairje01 1965     1  BAL AL 157 582  51 151  26   3  7  66  6  4 35 65   7   2  4  2   26
+# 4 adamsba01 1913     1  PIT NL  43 114  13  33   6   2  0  13  0 NA  1 16  NA   0  3 NA   NA
+# 5 adamsbo03 1952     1  CIN NL 154 637  85 180  25   4  6  48 11  9 49 67  NA   0  8 NA   15
+# 6 adcocjo01 1953     1  ML1 NL 157 590  71 168  33   6 18  80  3  2 42 82  NA   2  6 NA   22
+# head(ddply(baseball,
+#            .(id),
+#            subset,
+#            g==max(g)
+# ))
+```
+ - g==max(g)는 subset에서 조건을 지정하는데 사용되는 인자이므로 두 개의 등호가 사용됨에 유의
+
+### m*ply()
+ - maply(), mdply(), mlply(), m_ply() 함수는 데이터 프레임 또는 배열을 인자로 받아 각 컬럼에 주어진 함수에 적용한 뒤 그 실행 결과들을 조합
+
+```{r}
+x <- data.frame(
+  mean=1:5,
+  sd=1:5
+)
+x
+```
+ - mdply()를 사용하면 위 데이터프레임의 각 행을 rnorm() 함수의 mean, sd에 대한 인자로 넘겨주어 실행한 뒤 그 결과를 데이터 프레임으로 모을 수 있다.
+
+```{r}
+#   mean sd         V1         V2
+# 1    1  1  0.7725547 -0.5128513
+# 2    2  2 -0.1970092  4.6309699
+# 3    3  3  9.4133012 -2.8051799
+# 4    4  4  2.0498358  0.3068015
+# 5    5  5  5.7265166 12.9567793
+# mdply(x, rnorm, n=2)
+```
+---
+
+## reshape2 패키지
+
+### melt()
+
+### dcast()
+
+---
+
+## data.table 패키지
+
+### 데이터 테이블 생성
+
+### 데이터 접근과 그룹 연산
+
+### key를 사용한 탐색
+
+### key를 사용한 데이터 테이블 병합
+
+### 참조를 사용한 데이터 수정
+
+### rbindlist
+
+---
+
+## foreach
+
+---
+
+## doMC
+### 프로세스의 수 설정
+### plyr의 .parallel 옵션
+### foreach에서 %dopar%의 사용
+
+---
+
+## 테스팅과 디버깅
+
+### testthat
+### test_that을 사용한 테스트 그룹화
+### 테스트 파일 구조
+### 디버깅
+
+---
+
+## section:browser
+
+---
+
+## 코드 수행 시간 측정
+### system.time()을 사용한 시간 측정
+### Rprof()를 사용한 코드 프로파일링
